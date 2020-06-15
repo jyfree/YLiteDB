@@ -1,6 +1,7 @@
 package com.jy.litedb.api
 
 import com.jy.litedb.annotation.Scope
+import com.jy.litedb.api.utils.LiteLogUtils
 import java.util.*
 
 /**

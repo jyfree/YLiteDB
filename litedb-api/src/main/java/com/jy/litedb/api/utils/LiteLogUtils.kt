@@ -1,4 +1,4 @@
-package com.jy.litedb.api
+package com.jy.litedb.api.utils
 
 import android.util.Log
 import java.util.*
@@ -31,7 +31,12 @@ object LiteLogUtils {
         if (SHOW_LOG) {
             val traceElement = Thread.currentThread().stackTrace[3]
             val message = String.format(msgFormat, *args)
-            log(TAG, traceElement, message, LogLevel.ERROR)
+            log(
+                TAG,
+                traceElement,
+                message,
+                LogLevel.ERROR
+            )
         }
     }
 
@@ -39,7 +44,12 @@ object LiteLogUtils {
         if (SHOW_LOG) {
             val traceElement = Thread.currentThread().stackTrace[3]
             val message = String.format(msgFormat, *args)
-            log(TAG, traceElement, message, LogLevel.INFO)
+            log(
+                TAG,
+                traceElement,
+                message,
+                LogLevel.INFO
+            )
         }
     }
 
@@ -48,7 +58,12 @@ object LiteLogUtils {
         if (SHOW_LOG) {
             val traceElement = Thread.currentThread().stackTrace[3]
             val message = String.format(msgFormat, *args)
-            log(TAG, traceElement, message, LogLevel.WARN)
+            log(
+                TAG,
+                traceElement,
+                message,
+                LogLevel.WARN
+            )
         }
     }
 
@@ -57,7 +72,12 @@ object LiteLogUtils {
         if (SHOW_LOG) {
             val traceElement = Thread.currentThread().stackTrace[3]
             val message = String.format(msgFormat, *args)
-            log(TAG, traceElement, message, LogLevel.DEBUG)
+            log(
+                TAG,
+                traceElement,
+                message,
+                LogLevel.DEBUG
+            )
         }
     }
 
@@ -66,7 +86,12 @@ object LiteLogUtils {
         if (SHOW_LOG) {
             val traceElement = Thread.currentThread().stackTrace[3]
             val message = String.format(msgFormat, *args)
-            log(tag, traceElement, message, LogLevel.ERROR)
+            log(
+                tag,
+                traceElement,
+                message,
+                LogLevel.ERROR
+            )
         }
     }
 
@@ -74,7 +99,12 @@ object LiteLogUtils {
         if (SHOW_LOG) {
             val traceElement = Thread.currentThread().stackTrace[3]
             val message = String.format(msgFormat, *args)
-            log(tag, traceElement, message, LogLevel.INFO)
+            log(
+                tag,
+                traceElement,
+                message,
+                LogLevel.INFO
+            )
         }
     }
 
@@ -83,7 +113,12 @@ object LiteLogUtils {
         if (SHOW_LOG) {
             val traceElement = Thread.currentThread().stackTrace[3]
             val message = String.format(msgFormat, *args)
-            log(tag, traceElement, message, LogLevel.WARN)
+            log(
+                tag,
+                traceElement,
+                message,
+                LogLevel.WARN
+            )
         }
     }
 
@@ -92,7 +127,12 @@ object LiteLogUtils {
         if (SHOW_LOG) {
             val traceElement = Thread.currentThread().stackTrace[3]
             val message = String.format(msgFormat, *args)
-            log(tag, traceElement, message, LogLevel.DEBUG)
+            log(
+                tag,
+                traceElement,
+                message,
+                LogLevel.DEBUG
+            )
         }
     }
 
@@ -101,28 +141,48 @@ object LiteLogUtils {
     fun e(vararg args: Any?) {
         if (SHOW_LOG) {
             val traceElement = Thread.currentThread().stackTrace[3]
-            log(TAG, traceElement, getString(*args), LogLevel.ERROR)
+            log(
+                TAG,
+                traceElement,
+                getString(*args),
+                LogLevel.ERROR
+            )
         }
     }
 
     fun i(vararg args: Any?) {
         if (SHOW_LOG) {
             val traceElement = Thread.currentThread().stackTrace[3]
-            log(TAG, traceElement, getString(*args), LogLevel.INFO)
+            log(
+                TAG,
+                traceElement,
+                getString(*args),
+                LogLevel.INFO
+            )
         }
     }
 
     fun w(vararg args: Any?) {
         if (SHOW_LOG) {
             val traceElement = Thread.currentThread().stackTrace[3]
-            log(TAG, traceElement, getString(*args), LogLevel.WARN)
+            log(
+                TAG,
+                traceElement,
+                getString(*args),
+                LogLevel.WARN
+            )
         }
     }
 
     fun d(vararg args: Any?) {
         if (SHOW_LOG) {
             val traceElement = Thread.currentThread().stackTrace[3]
-            log(TAG, traceElement, getString(*args), LogLevel.DEBUG)
+            log(
+                TAG,
+                traceElement,
+                getString(*args),
+                LogLevel.DEBUG
+            )
         }
     }
 
@@ -130,28 +190,48 @@ object LiteLogUtils {
     fun eTag(tag: String, vararg args: Any?) {
         if (SHOW_LOG) {
             val traceElement = Thread.currentThread().stackTrace[3]
-            log(tag, traceElement, getString(*args), LogLevel.ERROR)
+            log(
+                tag,
+                traceElement,
+                getString(*args),
+                LogLevel.ERROR
+            )
         }
     }
 
     fun iTag(tag: String, vararg args: Any?) {
         if (SHOW_LOG) {
             val traceElement = Thread.currentThread().stackTrace[3]
-            log(tag, traceElement, getString(*args), LogLevel.INFO)
+            log(
+                tag,
+                traceElement,
+                getString(*args),
+                LogLevel.INFO
+            )
         }
     }
 
     fun wTag(tag: String, vararg args: Any?) {
         if (SHOW_LOG) {
             val traceElement = Thread.currentThread().stackTrace[3]
-            log(tag, traceElement, getString(*args), LogLevel.WARN)
+            log(
+                tag,
+                traceElement,
+                getString(*args),
+                LogLevel.WARN
+            )
         }
     }
 
     fun dTag(tag: String, vararg args: Any?) {
         if (SHOW_LOG) {
             val traceElement = Thread.currentThread().stackTrace[3]
-            log(tag, traceElement, getString(*args), LogLevel.DEBUG)
+            log(
+                tag,
+                traceElement,
+                getString(*args),
+                LogLevel.DEBUG
+            )
         }
     }
 

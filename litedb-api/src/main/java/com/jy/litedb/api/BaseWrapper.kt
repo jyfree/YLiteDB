@@ -15,7 +15,7 @@ import com.jy.litedb.annotation.Scope
 open class BaseWrapper<T : Any> constructor(private var subClass: Class<T>) : BaseSuperDao<T>() {
 
     init {
-        dbConfig = DBConfig.beginBuilder().build()
+//        dbConfig = DBConfig.beginBuilder().build()
     }
 
     override val tableName: String

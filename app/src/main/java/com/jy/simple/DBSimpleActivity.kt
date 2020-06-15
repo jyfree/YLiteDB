@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.jy.litedb.api.LiteLogUtils
+import com.jy.litedb.api.utils.LiteLogUtils
 import com.jy.simple.bean.TestInfo
 import com.jy.simple.db.TestDao
 

@@ -1,4 +1,4 @@
-package com.jy.litedb.api
+package com.jy.litedb.api.utils
 
 object LiteUtils {
     fun getDefaultLruCacheSize(): Int {

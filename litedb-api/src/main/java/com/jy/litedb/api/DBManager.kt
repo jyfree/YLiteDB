@@ -2,6 +2,7 @@ package com.jy.litedb.api
 
 import android.database.sqlite.SQLiteDatabase
 import android.os.Build
+import com.jy.litedb.api.utils.LiteLogUtils
 import java.util.concurrent.atomic.AtomicInteger
 
 /**

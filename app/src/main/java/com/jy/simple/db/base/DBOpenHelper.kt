@@ -4,7 +4,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import com.jy.litedb.api.BaseOpenHelper
 import com.jy.litedb.api.DBFieldManager
-import com.jy.litedb.api.LiteLogUtils
+import com.jy.litedb.api.utils.LiteLogUtils
 import com.jy.simple.bean.TestInfo
 
 /**

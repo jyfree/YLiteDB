@@ -1,4 +1,4 @@
-package com.jy.litedb.api
+package com.jy.litedb.api.utils
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject
