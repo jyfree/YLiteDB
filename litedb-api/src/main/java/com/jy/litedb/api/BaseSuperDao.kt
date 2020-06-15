@@ -246,14 +246,18 @@ abstract class BaseSuperDao<T> {
      *
      */
     fun getListInfo(): ArrayList<T> {
-        var list = cache.getList(tableName)
-        LiteLogUtils.i("db缓存", list?.size)
-        if (list.isNullOrEmpty()) {
-            list = getList()
-            //加入内存缓存
-            cache.putList(tableName, list)
+        return if (dbConfig?.isOpenCache == true) {
+            var list = cache.getList(tableName)
+            LiteLogUtils.i("db缓存", list?.size)
+            if (list.isNullOrEmpty()) {
+                list = getList()
+                //加入内存缓存
+                cache.putList(tableName, list)
+            }
+            list
+        } else {
+            getList()
         }
-        return list
     }
 
     /**

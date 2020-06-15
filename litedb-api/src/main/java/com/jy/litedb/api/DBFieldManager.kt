@@ -16,7 +16,7 @@ object DBFieldManager {
     /**
      * 解析注解，生成注解信息集合
      */
-    private fun register(subClass: Class<*>): List<DBFieldInfo> {
+    private fun getScopeListInfo(subClass: Class<*>): List<DBFieldInfo> {
         val fields = subClass.declaredFields
         val list = ArrayList<DBFieldInfo>()
         for (fie in fields) {
@@ -51,15 +51,6 @@ object DBFieldManager {
 
         return list
     }
-
-    /**
-     * 获取注解信息集合
-     */
-    private fun getScopeListInfo(subClass: Class<*>): List<DBFieldInfo> {
-
-        return register(subClass)
-    }
-
 
     /**
      * 创建表
