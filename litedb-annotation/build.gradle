@@ -1,0 +1,25 @@
+apply plugin: 'java-library'
+apply plugin: 'com.novoda.bintray-release'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+}
+
+sourceCompatibility = "7"
+targetCompatibility = "7"
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+publish {
+    artifactId = 'litedb-annotation'
+    userOrg = rootProject.userOrg//bintray.com用户名
+    groupId = rootProject.groupId//jcenter上的路径
+    uploadName = artifactId//项目名称
+    publishVersion = "1.0.0"//版本号
+    desc = "a easy db annotation to use for Android X "//项目介绍
+    website = rootProject.website//项目主页
+    licences = rootProject.licences
+}
