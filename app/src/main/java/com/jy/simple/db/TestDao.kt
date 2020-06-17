@@ -1,7 +1,7 @@
 package com.jy.simple.db
 
+import com.jy.litedb.api.BaseDao
 import com.jy.simple.bean.TestInfo
-import com.jy.simple.db.base.DBWrapper
 
 
 /**
@@ -11,13 +11,13 @@ import com.jy.simple.db.base.DBWrapper
  */
 object TestDao {
 
-    private var dbWrapper: DBWrapper<TestInfo>? = null
+    private var dbDao: BaseDao<TestInfo>? = null
 
     init {
-        dbWrapper = DBWrapper(TestInfo::class.java)
+        dbDao = BaseDao(TestInfo::class.java)
     }
 
-    fun getInstance(): DBWrapper<TestInfo> {
-        return dbWrapper!!
+    fun getInstance(): BaseDao<TestInfo> {
+        return dbDao!!
     }
 }

@@ -1,6 +1,5 @@
 package com.jy.litedb.annotation;
 
-import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -11,9 +10,8 @@ import java.lang.annotation.Target;
  * @Date 2019/10/28-9:46
  * @TODO
  */
-@Documented
 @Target(ElementType.FIELD)
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.CLASS)
 public @interface Scope {
     /**
      * 是否为主键

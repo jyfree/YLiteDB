@@ -3,7 +3,6 @@ package com.jy.litedb.api
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import com.jy.litedb.annotation.Scope
 
 
 /**
@@ -12,7 +11,9 @@ import com.jy.litedb.annotation.Scope
  * @Date 2019/10/26-14:35
  * @TODO 公共增删改查db
  */
-open class BaseWrapper<T : Any> constructor(private var subClass: Class<T>) : BaseSuperDao<T>() {
+open class BaseDao<T : Any> constructor(private var subClass: Class<T>) : BaseSuperDao<T>() {
+
+    private var hashMap: HashMap<String, FieldInfo> = LoaderFieldInfo.getFieldMapInfo(subClass)
 
     init {
 //        dbConfig = DBConfig.beginBuilder().build()
@@ -40,18 +41,16 @@ open class BaseWrapper<T : Any> constructor(private var subClass: Class<T>) : Ba
             if (value == null) {
                 value = ""
             }
-            //解析注解
-            if (fie.isAnnotationPresent(Scope::class.java)) {
-                val scope = fie.getAnnotation(Scope::class.java)
-                if (scope != null && scope.isPrimaryKey && scope.isAutoKey) {
+            val fieldInfo = hashMap[fie.name]
+            if (fieldInfo != null && fieldInfo.isPrimaryKey && fieldInfo.isAutoKey) {
 //                    LiteLogUtils.iFormatTag("BaseWrapper", "插入|更新--自增字段--表名：%s--字段名：%s", tableName, fie.name)
-                    continue
-                }
-                if (scope != null && scope.isFilter) {
-//                    LiteLogUtils.iFormatTag("BaseWrapper", "插入|更新--过滤字段--表名：%s--字段名：%s", tableName, fie.name)
-                    continue
-                }
+                continue
             }
+            if (fieldInfo != null && fieldInfo.isFilter) {
+//                    LiteLogUtils.iFormatTag("BaseWrapper", "插入|更新--过滤字段--表名：%s--字段名：%s", tableName, fie.name)
+                continue
+            }
+
             when {
                 Int::class.java == fie.type -> values.put(fie.name, value as Int)
                 Long::class.java == fie.type -> values.put(fie.name, value as Long)
@@ -82,14 +81,13 @@ open class BaseWrapper<T : Any> constructor(private var subClass: Class<T>) : Ba
             if (fie.isSynthetic) {
                 continue
             }
-            //解析注解
-            if (fie.isAnnotationPresent(Scope::class.java)) {
-                val scope = fie.getAnnotation(Scope::class.java)
-                if (scope != null && scope.isFilter) {
+
+            val fieldInfo = hashMap[fie.name]
+            if (fieldInfo != null && fieldInfo.isFilter) {
 //                    LiteLogUtils.iFormatTag("BaseWrapper", "查询--过滤字段--表名：%s--字段名：%s", tableName, fie.name)
-                    continue
-                }
+                continue
             }
+
             when {
                 Int::class.java == fie.type -> fie.set(subObject, getInt(cursor, fie.name))
                 Long::class.java == fie.type -> fie.set(subObject, getLong(cursor, fie.name))
@@ -124,14 +122,14 @@ open class BaseWrapper<T : Any> constructor(private var subClass: Class<T>) : Ba
         var key: Any? = null
         for (fie in fields) {
             fie.isAccessible = true
-            if (fie.isAnnotationPresent(Scope::class.java)) {
-                val scope = fie.getAnnotation(Scope::class.java)
-                if (scope != null && scope.isCompareField) {
-                    value = fie.get(item)
-                    key = fie.name
-                    break
-                }
+
+            val fieldInfo = hashMap[fie.name]
+            if (fieldInfo != null && fieldInfo.isCompareField) {
+                value = fie.get(item)
+                key = fie.name
+                break
             }
+
         }
         db.update(tableName, getContentValues(item), "$key = ?", arrayOf(value?.toString()))
     }
@@ -142,13 +140,13 @@ open class BaseWrapper<T : Any> constructor(private var subClass: Class<T>) : Ba
         var value: Any? = null
         for (fie in fields) {
             fie.isAccessible = true
-            if (fie.isAnnotationPresent(Scope::class.java)) {
-                val scope = fie.getAnnotation(Scope::class.java)
-                if (scope != null && scope.isCompareField) {
-                    value = fie.get(item1)
-                    break
-                }
+
+            val fieldInfo = hashMap[fie.name]
+            if (fieldInfo != null && fieldInfo.isCompareField) {
+                value = fie.get(item1)
+                break
             }
+
         }
         return value
     }

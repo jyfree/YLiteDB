@@ -1,15 +1,11 @@
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
     buildToolsVersion rootProject.ext.android.buildToolsVersion
 
-
     defaultConfig {
-        applicationId "com.jy.simple"
+        applicationId "com.jy.simple2"
         minSdkVersion rootProject.ext.android.minSdkVersion
         targetSdkVersion rootProject.ext.android.targetSdkVersion
         versionCode rootProject.ext.android.versionCode
@@ -29,12 +25,10 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation rootProject.ext.dependencies.kotlin_stdlib_jdk7
     implementation rootProject.ext.dependencies.androidx_appcompat
-    implementation rootProject.ext.dependencies.androidx_core_ktx
     implementation rootProject.ext.dependencies.androidx_constraintlayout
     implementation project(':litedb-api')
-    kapt project(':litedb-compiler')
+    annotationProcessor project(':litedb-compiler')
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'

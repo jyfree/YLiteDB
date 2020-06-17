@@ -45,7 +45,7 @@ abstract class BaseOpenHelper(context: Context, dbName: String, version: Int) :
      * @param subClass   需要更新的目标
      */
     fun addField(db: SQLiteDatabase, oldVersion: Int, subClass: Class<*>) {
-        execUpgradeSQL(db, *DBFieldManager.addField(subClass, oldVersion).toTypedArray())
+        execUpgradeSQL(db, *FieldManager.addField(subClass, oldVersion).toTypedArray())
     }
 
     /**

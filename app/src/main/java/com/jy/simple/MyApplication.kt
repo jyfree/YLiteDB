@@ -1,9 +1,8 @@
 package com.jy.simple
 
 import android.app.Application
-import android.content.Context
-import android.os.Process
 import com.jy.litedb.api.DBManager
+import com.jy.litedb.api.LoaderFieldInfo
 import com.jy.simple.db.base.DBOpenHelper
 
 
@@ -20,6 +19,8 @@ class MyApplication : Application() {
         if (instance == null) {
             instance = this
         }
+        //没有使用插件时，需要调用此方法
+        LoaderFieldInfo.openDexFileLoaderService(this)
         //初始化数据库
         DBManager.initializeInstance(DBOpenHelper.getInstance(applicationContext))
     }
