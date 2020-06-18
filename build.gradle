@@ -20,7 +20,8 @@ allprojects {
     repositories {
         google()
         jcenter()
-        
+        maven { url "https://dl.bintray.com/ljyfree/maven" }
+
     }
 
     tasks.withType(Javadoc) {
@@ -36,7 +37,7 @@ allprojects {
 
 ext {
     userOrg = 'ljyfree'//bintray.com用户名
-    groupId = 'com.jy.ylitedb'//组织id，jcenter上的路径
+    groupId = 'com.jy.litedb'//组织id，jcenter上的路径
     website = 'https://github.com/jyfree/YLiteDB'
     licences = ['Apache-2.0']
 }

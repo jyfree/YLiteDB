@@ -29,7 +29,8 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation rootProject.ext.dependencies.gson
-    api project(':litedb-annotation')
+    api rootProject.ext.dependencies.litedb_annotation
+//    api project(':litedb-annotation')
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
