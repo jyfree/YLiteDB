@@ -93,7 +93,7 @@ abstract class BaseSuperDao<T> {
      */
     @Synchronized
     fun insertOrUpdate(item: T) {
-        val tmpList = getList()
+        val tmpList = getListInfo()
         //深拷贝数据
         val cloneList = ConvertUtils.deepClone(Gson().toJson(tmpList), getSubClass())
 
@@ -134,7 +134,7 @@ abstract class BaseSuperDao<T> {
      */
     @Synchronized
     fun insertOrUpdate(dataList: List<T>) {
-        val tmpList = getList()
+        val tmpList = getListInfo()
         //深拷贝数据
         val cloneList = ConvertUtils.deepClone(Gson().toJson(tmpList), getSubClass())
 
