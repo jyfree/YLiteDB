@@ -2,6 +2,11 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'YLiteDB'
+
+YLiteDB {
+    enableDebug = true // 调试开关
+}
 
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion

@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase
 import com.jy.litedb.api.BaseOpenHelper
 import com.jy.litedb.api.FieldManager
 import com.jy.litedb.api.utils.LiteLogUtils
+import com.jy.simple.bean.SimpleInfo
 import com.jy.simple.bean.TestInfo
 
 /**
@@ -21,6 +22,7 @@ class DBOpenHelper internal constructor(context: Context) : BaseOpenHelper(conte
     override fun onCreateDB(db: SQLiteDatabase) {
         LiteLogUtils.i("创建数据库")
         db.execSQL(FieldManager.createTable(TestInfo::class.java))
+        db.execSQL(FieldManager.createTable(SimpleInfo::class.java))
     }
 
     override fun onUpgradeDB(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
