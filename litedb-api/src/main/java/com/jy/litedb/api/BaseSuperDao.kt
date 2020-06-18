@@ -94,19 +94,19 @@ abstract class BaseSuperDao<T> {
     @Synchronized
     fun insertOrUpdate(item: T) {
         val tmpList = getListInfo()
-        //深拷贝数据
-        val cloneList = ConvertUtils.deepClone(Gson().toJson(tmpList), getSubClass())
+        var tmpValue: T? = null
 
         try {
             val db = DBManager.getInstance().openDatabase()
             if (db.isOpen) {
                 //db是否存在此数据
                 var isExist = false
-                for (position in 0 until tmpList.size) {
-                    if (compareItem(item, tmpList[position])) {
+                val iterator = tmpList.iterator()
+                while (iterator.hasNext()) {
+                    tmpValue = iterator.next()
+                    if (compareItem(item, tmpValue)) {
                         isExist = true
-                        //替换旧数据
-                        cloneList[position] = item
+                        iterator.remove()
                         break
                     }
                 }
@@ -114,12 +114,13 @@ abstract class BaseSuperDao<T> {
                     updateItem(db, item)
                 } else {
                     db.insert(tableName, null, getContentValues(item))
-                    //加入拷贝集合
-                    cloneList.add(item)
+                }
+                tmpValue?.let {
+                    tmpList.add(it)
                 }
                 //加入缓存
                 if (dbConfig?.isOpenCache == true) {
-                    cache.putList(tableName, cloneList)
+                    cache.putList(tableName, tmpList)
                 }
             }
         } catch (e: Exception) {
