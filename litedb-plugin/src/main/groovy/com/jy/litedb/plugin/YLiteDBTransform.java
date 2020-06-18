@@ -40,11 +40,11 @@ public class YLiteDBTransform extends Transform {
      * Linux/Unix： com/jy/litedb/generated
      * Windows：    com\jy\litedb\generated
      */
-    public static final String INIT_SERVICE_DIR = Const.GEN_PKG.replace('.', File.separatorChar);
+    public static final String INIT_FIELD_INFO_DIR = Const.GEN_PKG.replace('.', File.separatorChar);
     /**
      * com/jy/litedb/generated
      */
-    public static final String INIT_SERVICE_PATH = Const.GEN_PKG.replace('.', '/');
+    public static final String INIT_FIELD_INFO_PATH = Const.GEN_PKG.replace('.', '/');
 
     @Override
     public String getName() {
@@ -112,8 +112,8 @@ public class YLiteDBTransform extends Transform {
         File dest = invocation.getOutputProvider().getContentLocation(
                 Const.NAME, TransformManager.CONTENT_CLASS,
                 ImmutableSet.of(QualifiedContent.Scope.PROJECT), Format.DIRECTORY);
-        //生成ServiceLoaderInit
-        generateServiceInitClass(dest.getAbsolutePath(), initClasses);
+        //生成FieldInfoLoaderInit
+        generateFieldInfoLoaderInit(dest.getAbsolutePath(), initClasses);
 
         YLiteDBLogger.info(TRANSFORM + "cost %s ms", System.currentTimeMillis() - ms);
 
@@ -129,10 +129,10 @@ public class YLiteDBTransform extends Transform {
         while (entries.hasMoreElements()) {
             JarEntry entry = entries.nextElement();
             String name = entry.getName();
-            if (name.endsWith(SdkConstants.DOT_CLASS) && name.startsWith(INIT_SERVICE_PATH)) {
+            if (name.endsWith(SdkConstants.DOT_CLASS) && name.startsWith(INIT_FIELD_INFO_PATH)) {
                 String className = trimName(name, 0).replace('/', '.');
                 initClasses.add(className);
-                YLiteDBLogger.info("    find ServiceInitClass: %s", className);
+                YLiteDBLogger.info("    find FieldInfoClass: %s", className);
             }
         }
     }
@@ -141,7 +141,7 @@ public class YLiteDBTransform extends Transform {
      * 扫描由注解生成器生成到包 {@link Const#GEN_PKG} 里的初始化类
      */
     private void scanDir(File dir, Set<String> initClasses) throws IOException {
-        File packageDir = new File(dir, INIT_SERVICE_DIR);
+        File packageDir = new File(dir, INIT_FIELD_INFO_DIR);
         if (packageDir.exists() && packageDir.isDirectory()) {
             Collection<File> files = FileUtils.listFiles(packageDir,
                     new SuffixFileFilter(SdkConstants.DOT_CLASS, IOCase.INSENSITIVE), TrueFileFilter.INSTANCE);
@@ -149,7 +149,7 @@ public class YLiteDBTransform extends Transform {
                 String className = trimName(f.getAbsolutePath(), dir.getAbsolutePath().length() + 1)
                         .replace(File.separatorChar, '.');
                 initClasses.add(className);
-                YLiteDBLogger.info("    find ServiceInitClass: %s", className);
+                YLiteDBLogger.info("    find FieldInfoClass: %s", className);
             }
         }
     }
@@ -177,10 +177,10 @@ public class YLiteDBTransform extends Transform {
      * }
      * </pre>
      */
-    private void generateServiceInitClass(String directory, Set<String> classes) {
+    private void generateFieldInfoLoaderInit(String directory, Set<String> classes) {
 
         if (classes.isEmpty()) {
-            YLiteDBLogger.info(GENERATE_INIT + "skipped, no service found");
+            YLiteDBLogger.info(GENERATE_INIT + "skipped, no fieldInfo found");
             return;
         }
 
@@ -188,7 +188,7 @@ public class YLiteDBTransform extends Transform {
             YLiteDBLogger.info(GENERATE_INIT + "start...");
             long ms = System.currentTimeMillis();
 
-            //ASM，字节码操作，生成ServiceLoaderInit代码
+            //ASM，字节码操作，生成FieldInfoLoaderInit代码
             ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
             ClassVisitor cv = new ClassVisitor(Opcodes.ASM5, writer) {
             };
