@@ -1,0 +1,28 @@
+apply plugin: 'groovy'
+apply plugin: 'com.novoda.bintray-release'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation gradleApi()
+    implementation localGroovy()
+    implementation project(':litedb-annotation')
+    implementation 'com.android.tools.build:gradle:3.2.1'
+}
+
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+publish {
+    artifactId = 'litedb-plugin'
+    userOrg = rootProject.userOrg//bintray.com用户名
+    groupId = rootProject.groupId//jcenter上的路径
+    uploadName = artifactId//项目名称
+    publishVersion = "1.0.0"//版本号
+    desc = "a easy plugin to use for gradle "//项目介绍
+    website = rootProject.website//项目主页
+    licences = rootProject.licences
+}

@@ -1,6 +1,7 @@
 package com.jy.litedb.annotation.common;
 
 public class Const {
+    public static final String NAME = "YLiteDB";
     public static final String SPLITTER = "_";
     public static final String PKG = "com.jy.litedb.";
     public static final String GEN_PKG = PKG + "generated";
