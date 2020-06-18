@@ -19,6 +19,7 @@ public class LoaderFieldInfo {
     public static HashMap<String, HashMap<String, FieldInfo>> hashMap = new HashMap<>();
 
     public static String dexFileName = null;
+    public static DBConfig dbConfig = null;
 
     private static final LazyInitHelper sInitHelper = new LazyInitHelper("LoaderFieldInfo") {
         @Override
@@ -64,6 +65,15 @@ public class LoaderFieldInfo {
      */
     public static void openDexFileLoaderService(Context context) {
         dexFileName = context.getPackageCodePath();
+    }
+
+    /**
+     * 设置配置文件
+     *
+     * @param config
+     */
+    public static void setDbConfig(DBConfig config) {
+        dbConfig = config;
     }
 
     public static HashMap<String, FieldInfo> getFieldMapInfo(Class cls) {

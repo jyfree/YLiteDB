@@ -56,7 +56,7 @@ class DBManager {
         private var mDatabaseHelper: BaseOpenHelper? = null
 
         @Synchronized
-        fun init(helper: BaseOpenHelper) {
+        fun init(helper: BaseOpenHelper, dbConfig: DBConfig) {
             if (instance == null) {
                 instance = DBManager()
                 mDatabaseHelper = helper
@@ -64,6 +64,7 @@ class DBManager {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     mDatabaseHelper!!.setWriteAheadLoggingEnabled(true)
                 }
+                LoaderFieldInfo.dbConfig = dbConfig
             }
         }
 
