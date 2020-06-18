@@ -1,5 +1,6 @@
 package com.jy.litedb.api
 
+import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.os.Build
 import com.jy.litedb.api.utils.LiteLogUtils
@@ -55,7 +56,7 @@ class DBManager {
         private var mDatabaseHelper: BaseOpenHelper? = null
 
         @Synchronized
-        fun initializeInstance(helper: BaseOpenHelper) {
+        fun init(helper: BaseOpenHelper) {
             if (instance == null) {
                 instance = DBManager()
                 mDatabaseHelper = helper
@@ -72,6 +73,13 @@ class DBManager {
                 throw IllegalStateException(DBManager::class.java.simpleName + " is not initialized, call initializeInstance(..) method first.")
             }
             return instance!!
+        }
+
+        /**
+         * 没有使用插件时，需要调用此方法，否则无法初始化数据库
+         */
+        fun openDexFileLoaderService(context: Context) {
+            LoaderFieldInfo.openDexFileLoaderService(context)
         }
     }
 }

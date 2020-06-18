@@ -43,11 +43,11 @@ open class BaseDao<T : Any> constructor(private var subClass: Class<T>) : BaseSu
             }
             val fieldInfo = hashMap[fie.name]
             if (fieldInfo != null && fieldInfo.isPrimaryKey && fieldInfo.isAutoKey) {
-//                    LiteLogUtils.iFormatTag("BaseWrapper", "插入|更新--自增字段--表名：%s--字段名：%s", tableName, fie.name)
+//                    LiteLogUtils.iFormat( "插入|更新--自增字段--表名：%s--字段名：%s", tableName, fie.name)
                 continue
             }
             if (fieldInfo != null && fieldInfo.isFilter) {
-//                    LiteLogUtils.iFormatTag("BaseWrapper", "插入|更新--过滤字段--表名：%s--字段名：%s", tableName, fie.name)
+//                    LiteLogUtils.iFormat("插入|更新--过滤字段--表名：%s--字段名：%s", tableName, fie.name)
                 continue
             }
 
@@ -84,7 +84,7 @@ open class BaseDao<T : Any> constructor(private var subClass: Class<T>) : BaseSu
 
             val fieldInfo = hashMap[fie.name]
             if (fieldInfo != null && fieldInfo.isFilter) {
-//                    LiteLogUtils.iFormatTag("BaseWrapper", "查询--过滤字段--表名：%s--字段名：%s", tableName, fie.name)
+//                    LiteLogUtils.iFormat("查询--过滤字段--表名：%s--字段名：%s", tableName, fie.name)
                 continue
             }
 

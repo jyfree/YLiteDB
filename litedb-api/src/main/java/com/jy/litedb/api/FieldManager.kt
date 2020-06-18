@@ -11,8 +11,6 @@ import java.util.*
  */
 object FieldManager {
 
-    private val TAG = FieldManager::class.java.simpleName
-
     /**
      * 创建表
      */
@@ -20,7 +18,7 @@ object FieldManager {
 
         val map = LoaderFieldInfo.getFieldMapInfo(subClass)
         if (map == null) {
-            LiteLogUtils.iTag(TAG, "创建表失败，无法加载类信息", subClass.simpleName)
+            LiteLogUtils.i("创建表失败，无法加载类信息", subClass.simpleName)
             return ""
         }
         val sb = StringBuilder("CREATE TABLE ")
@@ -54,7 +52,7 @@ object FieldManager {
         }
 
         val sqlMsg = sb.substring(0, sb.lastIndexOf(", ")) + ");"
-        LiteLogUtils.iTag(TAG, "创建表", sqlMsg)
+        LiteLogUtils.i("创建表", sqlMsg)
 
         return sqlMsg
 
@@ -74,7 +72,7 @@ object FieldManager {
 
         val map = LoaderFieldInfo.getFieldMapInfo(subClass)
         if (map == null) {
-            LiteLogUtils.iTag(TAG, "新增字段失败，无法加载类信息", subClass.simpleName)
+            LiteLogUtils.i("新增字段失败，无法加载类信息", subClass.simpleName)
             return sqlList
         }
         for ((key, fie) in map) {
@@ -92,7 +90,7 @@ object FieldManager {
                 val sql = String.format(formatStr, subClass.simpleName, fie.name, typeStr)
                 sqlList.add(sql)
 
-                LiteLogUtils.iTag(TAG, "修改表", sql)
+                LiteLogUtils.i("修改表", sql)
 
             }
         }

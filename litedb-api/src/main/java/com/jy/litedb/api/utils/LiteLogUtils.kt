@@ -11,7 +11,7 @@ import java.util.*
 object LiteLogUtils {
 
     var SHOW_LOG = true
-    private const val TAG = "YLogUtil"
+    private const val TAG = "LiteDB"
     private var level = LogLevel.ALL
 
     enum class LogLevel {
@@ -81,61 +81,6 @@ object LiteLogUtils {
         }
     }
 
-    //*******************************自定义TAG---Format方式****************************************
-    fun eFormatTag(tag: String, msgFormat: String, vararg args: Any?) {
-        if (SHOW_LOG) {
-            val traceElement = Thread.currentThread().stackTrace[3]
-            val message = String.format(msgFormat, *args)
-            log(
-                tag,
-                traceElement,
-                message,
-                LogLevel.ERROR
-            )
-        }
-    }
-
-    fun iFormatTag(tag: String, msgFormat: String, vararg args: Any?) {
-        if (SHOW_LOG) {
-            val traceElement = Thread.currentThread().stackTrace[3]
-            val message = String.format(msgFormat, *args)
-            log(
-                tag,
-                traceElement,
-                message,
-                LogLevel.INFO
-            )
-        }
-    }
-
-
-    fun wFormatTag(tag: String, msgFormat: String, vararg args: Any?) {
-        if (SHOW_LOG) {
-            val traceElement = Thread.currentThread().stackTrace[3]
-            val message = String.format(msgFormat, *args)
-            log(
-                tag,
-                traceElement,
-                message,
-                LogLevel.WARN
-            )
-        }
-    }
-
-
-    fun dFormatTag(tag: String, msgFormat: String, vararg args: Any?) {
-        if (SHOW_LOG) {
-            val traceElement = Thread.currentThread().stackTrace[3]
-            val message = String.format(msgFormat, *args)
-            log(
-                tag,
-                traceElement,
-                message,
-                LogLevel.DEBUG
-            )
-        }
-    }
-
     //***********************************非Format方式**********************************************
 
     fun e(vararg args: Any?) {
@@ -179,55 +124,6 @@ object LiteLogUtils {
             val traceElement = Thread.currentThread().stackTrace[3]
             log(
                 TAG,
-                traceElement,
-                getString(*args),
-                LogLevel.DEBUG
-            )
-        }
-    }
-
-    //**************************************自定义TAG--非Format方式****************************
-    fun eTag(tag: String, vararg args: Any?) {
-        if (SHOW_LOG) {
-            val traceElement = Thread.currentThread().stackTrace[3]
-            log(
-                tag,
-                traceElement,
-                getString(*args),
-                LogLevel.ERROR
-            )
-        }
-    }
-
-    fun iTag(tag: String, vararg args: Any?) {
-        if (SHOW_LOG) {
-            val traceElement = Thread.currentThread().stackTrace[3]
-            log(
-                tag,
-                traceElement,
-                getString(*args),
-                LogLevel.INFO
-            )
-        }
-    }
-
-    fun wTag(tag: String, vararg args: Any?) {
-        if (SHOW_LOG) {
-            val traceElement = Thread.currentThread().stackTrace[3]
-            log(
-                tag,
-                traceElement,
-                getString(*args),
-                LogLevel.WARN
-            )
-        }
-    }
-
-    fun dTag(tag: String, vararg args: Any?) {
-        if (SHOW_LOG) {
-            val traceElement = Thread.currentThread().stackTrace[3]
-            log(
-                tag,
                 traceElement,
                 getString(*args),
                 LogLevel.DEBUG
