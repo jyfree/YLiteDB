@@ -22,7 +22,7 @@ class MyApplication : Application() {
         //初始化数据库
         DBManager.init(
             DBOpenHelper.getInstance(applicationContext),
-            DBConfig.beginBuilder().build()
+            DBConfig.beginBuilder().setOpenCache(true).build()
         )
         //没有使用插件时，需要调用此方法
 //        DBManager.openDexFileLoaderService(this)

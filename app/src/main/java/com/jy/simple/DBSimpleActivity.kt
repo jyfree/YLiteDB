@@ -74,6 +74,11 @@ class DBSimpleActivity : AppCompatActivity() {
         testInfo.testUpdate = "更新字段"
         testInfo.testUpdateTwo = "更新字段2"
 //        testInfo.url="测试地址"
+        //测试批量插入
+//        val list=ArrayList<TestInfo>()
+//        list.add(testInfo)
+//        list.add(testInfo)
+//        list.add(testInfo)
         TestDao.getInstance().insertOrUpdate(testInfo)
 
         LiteLogUtils.iFormat("插入--用时%sms", System.currentTimeMillis() - startTime)
