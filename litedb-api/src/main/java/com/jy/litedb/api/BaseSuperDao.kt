@@ -4,7 +4,6 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.jy.litedb.api.utils.LiteLogUtils
-import com.jy.litedb.api.utils.LiteUtils
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -18,7 +17,6 @@ import kotlin.collections.ArrayList
 abstract class BaseSuperDao<T> {
 
     private val hashMap = HashMap<String, Int>()
-    private val cache = DBCache<T>(LiteUtils.getDefaultLruCacheSize())
 
     /**
      * 获取表名
@@ -74,7 +72,7 @@ abstract class BaseSuperDao<T> {
             }
             //加入缓存
             if (DBManager.getInstance().getDBConfig()?.isOpenCache == true) {
-                cache.putList(tableName, dataList)
+                DBManager.getInstance().cache.putList(tableName, dataList)
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -114,7 +112,7 @@ abstract class BaseSuperDao<T> {
                 tmpList.add(item)
                 //加入缓存
                 if (DBManager.getInstance().getDBConfig()?.isOpenCache == true) {
-                    cache.putList(tableName, tmpList)
+                    DBManager.getInstance().cache.putList(tableName, tmpList)
                 }
             }
         } catch (e: Exception) {
@@ -167,7 +165,7 @@ abstract class BaseSuperDao<T> {
 
                 //加入缓存
                 if (DBManager.getInstance().getDBConfig()?.isOpenCache == true) {
-                    cache.putList(tableName, cacheList)
+                    DBManager.getInstance().cache.putList(tableName, cacheList)
                 }
             }
         } catch (e: Exception) {
@@ -226,12 +224,13 @@ abstract class BaseSuperDao<T> {
      * 插入缓存
      */
     private fun addCache(item: T) {
-        var list = cache.getList(tableName)
+        var list = DBManager.getInstance().cache.getList(tableName)
         if (null == list) {
             list = ArrayList<T>()
             list.add(item)
-            cache.putList(tableName, list)
+            DBManager.getInstance().cache.putList(tableName, list)
         } else {
+            list as ArrayList<T>
             list.add(item)
         }
     }
@@ -243,14 +242,14 @@ abstract class BaseSuperDao<T> {
      */
     fun getListInfo(): ArrayList<T> {
         return if (DBManager.getInstance().getDBConfig()?.isOpenCache == true) {
-            var list = cache.getList(tableName)
+            var list = DBManager.getInstance().cache.getList(tableName)
             LiteLogUtils.i("db缓存", list?.size)
             if (list.isNullOrEmpty()) {
                 list = getList()
                 //加入内存缓存
-                cache.putList(tableName, list)
+                DBManager.getInstance().cache.putList(tableName, list)
             }
-            list
+            list as ArrayList<T>
         } else {
             getList()
         }

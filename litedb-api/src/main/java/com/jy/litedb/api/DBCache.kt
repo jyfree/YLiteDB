@@ -9,13 +9,13 @@ import java.util.*
  * @Date 2019/10/29-14:35
  * @TODO
  */
-class DBCache<T>(maxSize: Int) : LruCache<String, ArrayList<T>>(maxSize) {
+class DBCache(maxSize: Int) : LruCache<String, ArrayList<*>>(maxSize) {
 
-    fun getList(key: String): ArrayList<T>? {
+    fun getList(key: String): ArrayList<*>? {
         return get(key)
     }
 
-    fun putList(key: String, data: ArrayList<T>) {
+    fun putList(key: String, data: ArrayList<*>) {
         put(key, data)
     }
 }

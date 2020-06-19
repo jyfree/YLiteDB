@@ -4,6 +4,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.os.Build
 import com.jy.litedb.api.utils.LiteLogUtils
+import com.jy.litedb.api.utils.LiteUtils
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -16,6 +17,7 @@ class DBManager constructor(private var dbConfig: DBConfig?) {
 
     private val mOpenCounter = AtomicInteger()
     private var mDatabase: SQLiteDatabase? = null
+    val cache = DBCache(LiteUtils.getDefaultLruCacheSize())
 
     @Synchronized
     fun openDatabase(): SQLiteDatabase {
