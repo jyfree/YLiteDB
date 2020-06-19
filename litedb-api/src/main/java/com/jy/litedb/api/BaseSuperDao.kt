@@ -3,8 +3,6 @@ package com.jy.litedb.api
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import com.google.gson.Gson
-import com.jy.litedb.api.utils.ConvertUtils
 import com.jy.litedb.api.utils.LiteLogUtils
 import com.jy.litedb.api.utils.LiteUtils
 import java.util.*
@@ -21,7 +19,6 @@ abstract class BaseSuperDao<T> {
 
     private val hashMap = HashMap<String, Int>()
     private val cache = DBCache<T>(LiteUtils.getDefaultLruCacheSize())
-    var dbConfig: DBConfig? = null
 
     /**
      * 获取表名
@@ -44,7 +41,7 @@ abstract class BaseSuperDao<T> {
                 db.insert(tableName, null, getContentValues(item))
             }
             //加入缓存
-            if (dbConfig?.isOpenCache == true) {
+            if (DBManager.getInstance().getDBConfig()?.isOpenCache == true) {
                 addCache(item)
             }
         } catch (e: Exception) {
@@ -76,7 +73,7 @@ abstract class BaseSuperDao<T> {
                 db.endTransaction() // 处理完成
             }
             //加入缓存
-            if (dbConfig?.isOpenCache == true) {
+            if (DBManager.getInstance().getDBConfig()?.isOpenCache == true) {
                 cache.putList(tableName, dataList)
             }
         } catch (e: Exception) {
@@ -94,7 +91,6 @@ abstract class BaseSuperDao<T> {
     @Synchronized
     fun insertOrUpdate(item: T) {
         val tmpList = getListInfo()
-        var tmpValue: T? = null
 
         try {
             val db = DBManager.getInstance().openDatabase()
@@ -103,8 +99,8 @@ abstract class BaseSuperDao<T> {
                 var isExist = false
                 val iterator = tmpList.iterator()
                 while (iterator.hasNext()) {
-                    tmpValue = iterator.next()
-                    if (compareItem(item, tmpValue)) {
+                    val value = iterator.next()
+                    if (compareItem(item, value)) {
                         isExist = true
                         iterator.remove()
                         break
@@ -115,11 +111,9 @@ abstract class BaseSuperDao<T> {
                 } else {
                     db.insert(tableName, null, getContentValues(item))
                 }
-                tmpValue?.let {
-                    tmpList.add(it)
-                }
+                tmpList.add(item)
                 //加入缓存
-                if (dbConfig?.isOpenCache == true) {
+                if (DBManager.getInstance().getDBConfig()?.isOpenCache == true) {
                     cache.putList(tableName, tmpList)
                 }
             }
@@ -136,8 +130,10 @@ abstract class BaseSuperDao<T> {
     @Synchronized
     fun insertOrUpdate(dataList: List<T>) {
         val tmpList = getListInfo()
-        //深拷贝数据
-        val cloneList = ConvertUtils.deepClone(Gson().toJson(tmpList), getSubClass())
+        //缓存list
+        val cacheList = ArrayList<T>()
+        cacheList.addAll(dataList)
+        cacheList.addAll(tmpList)
 
         try {
             val db = DBManager.getInstance().openDatabase()
@@ -149,12 +145,13 @@ abstract class BaseSuperDao<T> {
 
                     var isExist = false//db是否存在此数据
 
-                    for (position in 0 until tmpList.size) {
-
-                        if (compareItem(item, tmpList[position])) {
+                    val iterator = tmpList.iterator()
+                    while (iterator.hasNext()) {
+                        val value = iterator.next()
+                        if (compareItem(item, value)) {
                             isExist = true
-                            //替换旧数据
-                            cloneList[position] = item
+                            //移除多余item
+                            cacheList.remove(value)
                             break
                         }
                     }
@@ -162,8 +159,6 @@ abstract class BaseSuperDao<T> {
                         updateItem(db, item)
                     } else {
                         db.insert(tableName, null, getContentValues(item))
-                        //加入拷贝集合
-                        cloneList.add(item)
                     }
                 }
 
@@ -171,8 +166,8 @@ abstract class BaseSuperDao<T> {
                 db.endTransaction() // 处理完成
 
                 //加入缓存
-                if (dbConfig?.isOpenCache == true) {
-                    cache.putList(tableName, cloneList)
+                if (DBManager.getInstance().getDBConfig()?.isOpenCache == true) {
+                    cache.putList(tableName, cacheList)
                 }
             }
         } catch (e: Exception) {
@@ -221,7 +216,7 @@ abstract class BaseSuperDao<T> {
      *
      * @return
      */
-    fun getList(): ArrayList<T> {
+    private fun getList(): ArrayList<T> {
         val db = DBManager.getInstance().openDatabase()
         val cursor = db.query(tableName, null, null, null, null, null, null)
         return queryList(db, cursor)
@@ -247,7 +242,7 @@ abstract class BaseSuperDao<T> {
      *
      */
     fun getListInfo(): ArrayList<T> {
-        return if (dbConfig?.isOpenCache == true) {
+        return if (DBManager.getInstance().getDBConfig()?.isOpenCache == true) {
             var list = cache.getList(tableName)
             LiteLogUtils.i("db缓存", list?.size)
             if (list.isNullOrEmpty()) {

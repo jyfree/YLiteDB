@@ -15,10 +15,6 @@ open class BaseDao<T : Any> constructor(private var subClass: Class<T>) : BaseSu
 
     private var hashMap: HashMap<String, FieldInfo> = LoaderFieldInfo.getFieldMapInfo(subClass)
 
-    init {
-        dbConfig = LoaderFieldInfo.dbConfig
-    }
-
     override val tableName: String
         get() = subClass.simpleName
 
