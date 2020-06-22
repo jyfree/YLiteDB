@@ -19,6 +19,7 @@ public class Const {
     //dao生成实现类
     public static final String GEN_CLASS_DAO_NAME = SPLITTER + "Impl";
     public static final String SUPER_NAME = API_PACKAGE + ".BaseDao";
+    public static final String DB_MANAGER_CLASS = "DBManager";
 
 
 }

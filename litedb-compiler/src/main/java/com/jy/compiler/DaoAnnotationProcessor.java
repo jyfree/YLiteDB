@@ -88,9 +88,11 @@ public class DaoAnnotationProcessor extends BaseProcessor {
                     for (VariableElement parameter : methodSymbol.getParameters()) {
                         result.add(ParameterSpec.get(parameter));
                     }
-                    methodBuilder.addStatement("return null");
-
-                    String sql = query.value();
+                    //生成代码
+                    builderSQL(methodBuilder, query.value(), methodSymbol.getParameters());
+                    builderDB(methodBuilder);
+                    builderCursor(methodBuilder);
+                    builderResult(methodBuilder, returnType);
 
                     messager.printMessage(Diagnostic.Kind.NOTE, "DaoAnnotationProcessor--add methodName--" + methodName);
 
@@ -120,6 +122,75 @@ public class DaoAnnotationProcessor extends BaseProcessor {
     }
 
     /**
+     * 生成sql语句
+     * 例子：
+     * String sql="SELECT * FROM TestJava";
+     * 或
+     * String sql=String.format("SELECT * FROM TestJava WHERE url = %s",url);
+     *
+     * @param methodBuilder
+     * @param sqlStr
+     * @param parameters
+     */
+    private void builderSQL(CodeBlock.Builder methodBuilder, String sqlStr, List<Symbol.VarSymbol> parameters) {
+        StringBuilder sqlParameter = new StringBuilder();
+        for (VariableElement parameter : parameters) {
+            sqlStr = sqlStr.replace(":" + parameter.getSimpleName(), "%s");
+            sqlParameter.append(",").append(parameter.getSimpleName());
+        }
+        //生成sql语句
+        if (parameters.size() > 0) {
+            methodBuilder.addStatement("String sql=String.format($S$N)", sqlStr, sqlParameter);
+        } else {
+            methodBuilder.addStatement("String sql=$S", sqlStr);
+        }
+    }
+
+    /**
+     * 生成db对象
+     * 例子：
+     * SQLiteDatabase db = DBManager.Companion.getInstance().openDatabase();
+     *
+     * @param methodBuilder
+     */
+    private void builderDB(CodeBlock.Builder methodBuilder) {
+        ClassName dbManager = ClassName.get(Const.API_PACKAGE, Const.DB_MANAGER_CLASS);
+        ClassName sqLiteDatabase = ClassName.get("android.database.sqlite", "SQLiteDatabase");
+        methodBuilder.addStatement("$T db = $T.Companion.getInstance().openDatabase()", sqLiteDatabase, dbManager);
+    }
+
+    /**
+     * 生成Cursor对象
+     * 例子：
+     * Cursor  cursor = db.rawQuery(sql, new String[]{});
+     *
+     * @param methodBuilder
+     */
+    private void builderCursor(CodeBlock.Builder methodBuilder) {
+        ClassName cursor = ClassName.get("android.database", "Cursor");
+        methodBuilder.addStatement("$T cursor = db.rawQuery(sql, new String[]{})", cursor);
+    }
+
+    /**
+     * 生成返回值
+     * 例子:
+     * return queryList(db,cursor);
+     * 或
+     * return queryItem(db,cursor);
+     *
+     * @param methodBuilder
+     */
+    private void builderResult(CodeBlock.Builder methodBuilder, Type returnType) {
+        //判断是否为参数化类型
+        if (returnType.isParameterized()) {
+            methodBuilder.addStatement("return queryList(db,cursor)");
+        } else {
+            methodBuilder.addStatement("return queryItem(db,cursor)");
+        }
+
+    }
+
+    /**
      * 生成构造函数，示例代码：
      * 如：
      * <pre>
@@ -133,7 +204,7 @@ public class DaoAnnotationProcessor extends BaseProcessor {
      * @param typeName
      * @return
      */
-    public MethodSpec builderConstructor(TypeName typeName) {
+    private MethodSpec builderConstructor(TypeName typeName) {
         ClassName strClass = ClassName.get("java.lang", "Class");
         //父类，如：Class<TestJava>
         TypeName superName = ParameterizedTypeName.get(strClass, typeName);
