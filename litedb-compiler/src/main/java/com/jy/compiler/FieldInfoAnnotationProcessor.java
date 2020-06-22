@@ -2,7 +2,6 @@ package com.jy.compiler;
 
 import com.google.auto.service.AutoService;
 import com.jy.litedb.annotation.DBEntity;
-import com.jy.litedb.annotation.Dao;
 import com.jy.litedb.annotation.Scope;
 import com.jy.litedb.annotation.common.Const;
 import com.squareup.javapoet.ClassName;
@@ -39,8 +38,8 @@ public class FieldInfoAnnotationProcessor extends BaseProcessor {
 
         ClassName hashMap = ClassName.get("java.util", "HashMap");
         ClassName stringClass = ClassName.get("java.lang", "String");
-        ClassName dbFieldInfo = ClassName.get(Const.FIELD_INFO_PACKAGE, Const.FIELD_INFO_CLASS);
-        ClassName loaderFieldInfo = ClassName.get(Const.FIELD_INFO_PACKAGE, Const.LOADER_FIELD_INFO_CLASS);
+        ClassName dbFieldInfo = ClassName.get(Const.API_PACKAGE, Const.FIELD_INFO_CLASS);
+        ClassName loaderFieldInfo = ClassName.get(Const.API_PACKAGE, Const.LOADER_FIELD_INFO_CLASS);
         TypeName mapOfFieldInfo = ParameterizedTypeName.get(hashMap, stringClass, dbFieldInfo);
 
         for (Element classElement : env.getElementsAnnotatedWith(DBEntity.class)) {
@@ -102,7 +101,7 @@ public class FieldInfoAnnotationProcessor extends BaseProcessor {
                         + name + "--type--" + type);
             }
             builder.addStatement("$T.hashMap.put($S,map)", loaderFieldInfo, className);
-            buildClass(builder.build(), Const.INIT_METHOD, TypeName.VOID, Const.GEN_CLASS_PREFIX_NAME + className);
+            buildClass(Const.GEN_PKG_FIELD, Const.GEN_CLASS_FIELD_INFO_NAME + className, Const.INIT_METHOD, TypeName.VOID, builder.build());
         }
 
         messager.printMessage(Diagnostic.Kind.NOTE, "FieldInfoAnnotationProcessor--finish...");
@@ -116,7 +115,7 @@ public class FieldInfoAnnotationProcessor extends BaseProcessor {
     public Set<String> getSupportedAnnotationTypes() {
         List<String> list = new ArrayList<>();
         list.add(Scope.class.getName());
-        list.add(Dao.class.getName());
+        list.add(DBEntity.class.getName());
         return new HashSet<>(list);
     }
 }

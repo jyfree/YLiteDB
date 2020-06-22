@@ -1,14 +1,15 @@
 package com.jy.compiler;
 
-import com.jy.litedb.annotation.common.Const;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
@@ -100,7 +101,7 @@ public abstract class BaseProcessor extends AbstractProcessor {
 
 
     /**
-     * 通用生成java代码
+     * 生成通用代码（单个方法）
      * <p>
      * 如：
      * <pre>
@@ -115,12 +116,13 @@ public abstract class BaseProcessor extends AbstractProcessor {
      * }
      * </pre>
      *
-     * @param code         方法中的代码
+     * @param packageName  包名
+     * @param genClassName 生成的类名
      * @param methodName   方法名
      * @param returnType   返回类型
-     * @param genClassName 生成class的SimpleClassName
+     * @param code         方法中的代码
      */
-    public void buildClass(CodeBlock code, String methodName, TypeName returnType, String genClassName) {
+    public void buildClass(String packageName, String genClassName, String methodName, TypeName returnType, CodeBlock code) {
 
         messager.printMessage(Diagnostic.Kind.NOTE, " --> create " + genClassName);
 
@@ -130,17 +132,74 @@ public abstract class BaseProcessor extends AbstractProcessor {
                 .returns(returnType)
                 .addCode(code)
                 .build();
+
         TypeSpec typeSpec = TypeSpec.classBuilder(genClassName)
                 .addModifiers(Modifier.PUBLIC)
                 .addMethod(methodSpec)
                 .build();
         try {
-            JavaFile.builder(Const.GEN_PKG, typeSpec)
+            JavaFile.builder(packageName, typeSpec)
                     .build()
                     .writeTo(filer);
         } catch (IOException e) {
             messager.printMessage(Diagnostic.Kind.NOTE, " --> create " + genClassName + "error");
             throw new RuntimeException(e);
         }
+    }
+
+
+    /**
+     * 生成通用代码（n个方法）
+     *
+     * @param packageName    包名
+     * @param genClassName   生成的类名
+     * @param superName      继承类
+     * @param interfaceName  实现类
+     * @param methodSpecList 方法集合
+     */
+    public void buildClass(String packageName, String genClassName, TypeName superName, String interfaceName, List<MethodSpec> methodSpecList) {
+
+        messager.printMessage(Diagnostic.Kind.NOTE, " --> create " + genClassName);
+
+        TypeSpec.Builder builder = TypeSpec.classBuilder(genClassName)
+                .superclass(superName)
+                .addSuperinterface(className(interfaceName))
+                .addModifiers(Modifier.PUBLIC);
+
+        for (MethodSpec spec : methodSpecList) {
+            builder.addMethod(spec);
+        }
+        try {
+            JavaFile.builder(packageName, builder.build())
+                    .build()
+                    .writeTo(filer);
+        } catch (IOException e) {
+            messager.printMessage(Diagnostic.Kind.NOTE, " --> create " + genClassName + "error");
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 创建方法
+     *
+     * @param methodName     方法名
+     * @param returnType     返回类型
+     * @param parameterSpecs 参数集(可为null)
+     * @param annotation     注解(可为null)
+     * @param code           方法代码
+     * @return
+     */
+    public MethodSpec buildMethod(String methodName, TypeName returnType, Iterable<ParameterSpec> parameterSpecs, ClassName annotation, CodeBlock code) {
+        MethodSpec.Builder builder = MethodSpec.methodBuilder(methodName)
+                .addModifiers(Modifier.PUBLIC)
+                .returns(returnType)
+                .addCode(code);
+        if (parameterSpecs != null) {
+            builder.addParameters(parameterSpecs);
+        }
+        if (annotation != null) {
+            builder.addAnnotation(annotation);
+        }
+        return builder.build();
     }
 }

@@ -5,8 +5,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation gradleApi()
     implementation localGroovy()
-    implementation rootProject.ext.dependencies.litedb_annotation
-//    implementation project(':litedb-annotation')
+//    implementation rootProject.ext.dependencies.litedb_annotation
+    implementation project(':litedb-annotation')
     implementation 'com.android.tools.build:gradle:3.2.1'
 }
 

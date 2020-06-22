@@ -40,11 +40,11 @@ public class YLiteDBTransform extends Transform {
      * Linux/Unix： com/jy/litedb/generated
      * Windows：    com\jy\litedb\generated
      */
-    public static final String INIT_FIELD_INFO_DIR = Const.GEN_PKG.replace('.', File.separatorChar);
+    public static final String INIT_FIELD_INFO_DIR = Const.GEN_PKG_FIELD.replace('.', File.separatorChar);
     /**
      * com/jy/litedb/generated
      */
-    public static final String INIT_FIELD_INFO_PATH = Const.GEN_PKG.replace('.', '/');
+    public static final String INIT_FIELD_INFO_PATH = Const.GEN_PKG_FIELD.replace('.', '/');
 
     @Override
     public String getName() {
@@ -121,7 +121,7 @@ public class YLiteDBTransform extends Transform {
 
 
     /**
-     * 扫描由注解生成器生成到包 {@link Const#GEN_PKG} 里的初始化类
+     * 扫描由注解生成器生成到包 {@link Const#GEN_PKG_FIELD} 里的初始化类
      */
     private void scanJarFile(File file, Set<String> initClasses) throws IOException {
         JarFile jarFile = new JarFile(file);
@@ -138,7 +138,7 @@ public class YLiteDBTransform extends Transform {
     }
 
     /**
-     * 扫描由注解生成器生成到包 {@link Const#GEN_PKG} 里的初始化类
+     * 扫描由注解生成器生成到包 {@link Const#GEN_PKG_FIELD} 里的初始化类
      */
     private void scanDir(File dir, Set<String> initClasses) throws IOException {
         File packageDir = new File(dir, INIT_FIELD_INFO_DIR);
