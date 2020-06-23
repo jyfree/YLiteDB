@@ -103,6 +103,7 @@ public class DaoAnnotationProcessor extends BaseProcessor {
             }
             //添加构造函数
             methodSpecList.add(builderConstructor(entitiesTypeArguments));
+            methodSpecList.add(builderDefaultConstructor(entitiesTypeArguments));
             //生成实现类
             buildClass(Const.GEN_PKG, className + Const.GEN_CLASS_DAO_NAME, superName, interfaceName, methodSpecList);
         }
@@ -213,6 +214,28 @@ public class DaoAnnotationProcessor extends BaseProcessor {
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(superName, "subClass")
                 .addCode("super(subClass);", "")
+                .build();
+    }
+
+    /**
+     * 生成默认构造函数
+     * 如：
+     * <pre>
+     * public class TestJavaDao_Impl extends BaseDao<TestJava> implements TestJavaDao {
+     *    public TestJavaDao_Impl() {
+     *       super(TestJava.class);
+     *      }
+     * }
+     * </pre>
+     *
+     * @param typeName
+     * @return
+     */
+    private MethodSpec builderDefaultConstructor(TypeName typeName) {
+
+        return MethodSpec.constructorBuilder()
+                .addModifiers(Modifier.PUBLIC)
+                .addCode("super($T.class);", typeName)
                 .build();
     }
 }

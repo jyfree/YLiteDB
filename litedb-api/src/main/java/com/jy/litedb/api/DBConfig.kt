@@ -9,21 +9,20 @@ import com.jy.litedb.api.utils.LiteLogUtils
  * @author: jy
  */
 class DBConfig(builder: Builder) {
-    var isOpenCache = builder.isOpenCache//是否开启缓存
-    var showLog = builder.showLog//是否显示log
-
+    var isOpenCache = builder.openDBCache//是否开启缓存
+    var showLog = builder.showDBLog//是否显示log
 
     class Builder {
-        var isOpenCache = true
-        var showLog = true
-        fun setOpenCache(openCache: Boolean): Builder {
-            isOpenCache = openCache
+        var openDBCache = true
+        var showDBLog = true
+        fun setOpenCache(open: Boolean): Builder {
+            openDBCache = open
             return this
         }
 
-        fun setShowLog(showLog: Boolean): Builder {
-            this.showLog = showLog
-            LiteLogUtils.SHOW_LOG = showLog
+        fun setShowLog(show: Boolean): Builder {
+            this.showDBLog = show
+            LiteLogUtils.SHOW_LOG = show
             return this
         }
 

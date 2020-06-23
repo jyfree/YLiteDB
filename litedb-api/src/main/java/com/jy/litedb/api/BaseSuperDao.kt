@@ -14,7 +14,7 @@ import kotlin.collections.ArrayList
  * @Date 2019/10/26-13:24
  * @TODO 数据库表超类
  */
-abstract class BaseSuperDao<T> {
+abstract class BaseSuperDao<T> : IDao<T> {
 
     private val hashMap = HashMap<String, Int>()
 
@@ -32,7 +32,7 @@ abstract class BaseSuperDao<T> {
      * @param item
      */
     @Synchronized
-    fun insert(item: T) {
+    override fun insert(item: T) {
         try {
             val db = DBManager.getInstance().openDatabase()
             if (db.isOpen) {
@@ -55,7 +55,7 @@ abstract class BaseSuperDao<T> {
      * @param dataList
      */
     @Synchronized
-    fun insert(dataList: ArrayList<T>) {
+    override fun insert(dataList: ArrayList<T>) {
         try {
             val db = DBManager.getInstance().openDatabase()
             if (db.isOpen) {
@@ -87,7 +87,7 @@ abstract class BaseSuperDao<T> {
      * @param item
      */
     @Synchronized
-    fun insertOrUpdate(item: T) {
+    override fun insertOrUpdate(item: T) {
         val tmpList = getListInfo()
 
         try {
@@ -126,7 +126,7 @@ abstract class BaseSuperDao<T> {
      * 批量插入或更新
      */
     @Synchronized
-    fun insertOrUpdate(dataList: List<T>) {
+    override fun insertOrUpdate(dataList: ArrayList<T>) {
         val tmpList = getListInfo()
         //缓存list
         val cacheList = ArrayList<T>()
@@ -180,7 +180,7 @@ abstract class BaseSuperDao<T> {
      *
      * @return
      */
-    fun getMapInfo(key: String): Map<Any, T> {
+    override fun getMapInfo(key: String): Map<Any, T> {
         val map = HashMap<Any, T>()
 
         var cursor: Cursor? = null
@@ -240,7 +240,7 @@ abstract class BaseSuperDao<T> {
      * 获取list集合（内存缓存）
      *
      */
-    fun getListInfo(): ArrayList<T> {
+    override fun getListInfo(): ArrayList<T> {
         return if (DBManager.getInstance().getDBConfig()?.isOpenCache == true) {
             var list = DBManager.getInstance().cache.getList(tableName)
             LiteLogUtils.i("db缓存", list?.size)
@@ -260,7 +260,7 @@ abstract class BaseSuperDao<T> {
      *
      * @return
      */
-    fun queryList(db: SQLiteDatabase, cursor: Cursor?): ArrayList<T> {
+    override fun queryList(db: SQLiteDatabase, cursor: Cursor?): ArrayList<T> {
 
         val msgList = ArrayList<T>()
         try {
@@ -282,7 +282,7 @@ abstract class BaseSuperDao<T> {
     /**
      * 获取item（自定义db和cursor）
      */
-    fun queryItem(db: SQLiteDatabase, cursor: Cursor?): T? {
+    override fun queryItem(db: SQLiteDatabase, cursor: Cursor?): T? {
 
         var t: T? = null
         try {
@@ -319,7 +319,7 @@ abstract class BaseSuperDao<T> {
     /**
      * 删除所有信息
      */
-    fun deleteAll() {
+    override fun deleteAll() {
 
         try {
             val db = DBManager.getInstance().openDatabase()

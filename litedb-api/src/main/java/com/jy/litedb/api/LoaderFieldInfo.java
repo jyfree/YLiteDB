@@ -28,7 +28,7 @@ public class LoaderFieldInfo {
                 if (null != dexFileName && !dexFileName.isEmpty()) {
                     //利用包名获取所有类
                     LiteLogUtils.INSTANCE.i("[LoaderFieldInfo] init class invoked to classList");
-                    List<String> classList = ClassUtils.getClassName(dexFileName, Const.GEN_PKG);
+                    List<String> classList = ClassUtils.getClassName(dexFileName, Const.GEN_PKG_FIELD);
                     for (String name : classList) {
                         LiteLogUtils.INSTANCE.iFormat("[LoaderFieldInfo] init class invoked name：%s", name);
                         Class.forName(name)
