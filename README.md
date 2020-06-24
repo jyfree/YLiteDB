@@ -36,6 +36,7 @@ YLiteDB封装了sqlite，利用注解实现表的创建、查询、插入等，�
 
 一、创建db实体
 
+```Java
 @DBEntity
 public class TestJava {
     @Scope(isPrimaryKey = true, isAutoKey = true)
@@ -44,6 +45,7 @@ public class TestJava {
     String url;
     String msg;
 }
+```
 
 二、创建dao接口
 @Dao(entities = TestJava.class)
