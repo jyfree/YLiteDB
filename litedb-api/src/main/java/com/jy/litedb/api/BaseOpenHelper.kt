@@ -45,7 +45,11 @@ abstract class BaseOpenHelper(context: Context, dbName: String, version: Int) :
      * @param subClass   需要更新的目标
      */
     fun addField(db: SQLiteDatabase, oldVersion: Int, subClass: Class<*>) {
-        execUpgradeSQL(db, *FieldManager.addField(subClass, oldVersion).toTypedArray())
+        execUpgradeSQL(
+            db,
+            subClass.simpleName,
+            *FieldManager.addField(subClass, oldVersion).toTypedArray()
+        )
     }
 
     /**
@@ -55,9 +59,9 @@ abstract class BaseOpenHelper(context: Context, dbName: String, version: Int) :
      * @param db
      * @param sqlArray 数据库语句集合
      */
-    fun execUpgradeSQL(db: SQLiteDatabase, vararg sqlArray: String) {
+    fun execUpgradeSQL(db: SQLiteDatabase, simpleName: String, vararg sqlArray: String) {
         if (sqlArray.isEmpty()) {
-            LiteLogUtils.e(TAG, "更新db语句错误，请检查版本号、db实体")
+            LiteLogUtils.e(TAG, "该表没有需要更新的字段", simpleName)
             return
         }
         db.beginTransaction()

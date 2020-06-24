@@ -2,6 +2,7 @@ package com.jy.compiler;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
@@ -157,18 +158,29 @@ public abstract class BaseProcessor extends AbstractProcessor {
      * @param interfaceName  实现类
      * @param methodSpecList 方法集合
      */
-    public void buildClass(String packageName, String genClassName, TypeName superName, String interfaceName, List<MethodSpec> methodSpecList) {
+    public void buildClass(String packageName, String genClassName, TypeName superName, String interfaceName, List<MethodSpec> methodSpecList, List<FieldSpec> fieldSpecList) {
 
         messager.printMessage(Diagnostic.Kind.NOTE, " --> create " + genClassName);
 
         TypeSpec.Builder builder = TypeSpec.classBuilder(genClassName)
                 .superclass(superName)
-                .addSuperinterface(className(interfaceName))
                 .addModifiers(Modifier.PUBLIC);
 
-        for (MethodSpec spec : methodSpecList) {
-            builder.addMethod(spec);
+        if (interfaceName != null) {
+            builder.addSuperinterface(className(interfaceName));
         }
+
+        if (methodSpecList != null) {
+            for (MethodSpec spec : methodSpecList) {
+                builder.addMethod(spec);
+            }
+        }
+        if (fieldSpecList != null) {
+            for (FieldSpec spec : fieldSpecList) {
+                builder.addField(spec);
+            }
+        }
+
         try {
             JavaFile.builder(packageName, builder.build())
                     .build()

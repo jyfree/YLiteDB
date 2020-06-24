@@ -2,6 +2,8 @@ package com.jy.litedb.api;
 
 import android.content.Context;
 
+import com.jy.litedb.annotation.common.Const;
+
 
 public class YLite {
 
@@ -17,8 +19,7 @@ public class YLite {
         final String implName = postPackageName.replace('.', '_') + suffix;
         try {
 
-            @SuppressWarnings("unchecked") final Class<T> aClass = (Class<T>) Class.forName(
-                    fullPackage.isEmpty() ? implName : fullPackage + "." + implName);
+            @SuppressWarnings("unchecked") final Class<T> aClass = (Class<T>) Class.forName(Const.GEN_PKG + "." + implName);
             return aClass.newInstance();
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("cannot find implementation for "

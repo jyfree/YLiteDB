@@ -7,6 +7,10 @@ public class Const {
     public static final String PKG = "com.jy.litedb.";
     public static final String GEN_PKG = PKG + "generated";
     public static final String API_PACKAGE = PKG + "api";
+    public static final String UTILS_PACKAGE = PKG + "api.utils";
+    public static final String GEN_CLASS_IMPL_NAME = SPLITTER + "Impl";
+    public static final String LOG_CLASS = "LiteLogUtils";
+
 
     //field生成相关
     public static final String GEN_PKG_FIELD = GEN_PKG + ".field";
@@ -17,9 +21,10 @@ public class Const {
     public static final String FIELD_INFO_LOADER_INIT = GEN_PKG + ".FieldInfoLoaderInit";
 
     //dao生成实现类
-    public static final String GEN_CLASS_DAO_NAME = SPLITTER + "Impl";
-    public static final String SUPER_NAME = API_PACKAGE + ".BaseDao";
+    public static final String DAO_SUPER_NAME = API_PACKAGE + ".BaseDao";
     public static final String DB_MANAGER_CLASS = "DBManager";
 
-
+    //AppDatabase生成实现类
+    public static final String BASE_OPEN_HELPER_CLASS = "BaseOpenHelper";
+    public static final String FIELD_MANAGER_CLASS = "FieldManager";
 }

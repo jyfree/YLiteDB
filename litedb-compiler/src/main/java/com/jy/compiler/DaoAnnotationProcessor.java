@@ -55,11 +55,11 @@ public class DaoAnnotationProcessor extends BaseProcessor {
             messager.printMessage(Diagnostic.Kind.NOTE, "DaoAnnotationProcessor--className--" + className);
 
             //从注解中获取类，如：com.jy.simple2.TestJava
-            TypeMirror entitiesTypeMirror = Utils.getEntities(classElement);
+            TypeMirror entitiesTypeMirror = Utils.getDaoEntities(classElement);
             //实体类型， 如：TestJava
             TypeName entitiesTypeArguments = className(entitiesTypeMirror.toString());
             //父类 ，如：BaseDao<TestJava>
-            TypeName superName = ParameterizedTypeName.get(className(Const.SUPER_NAME), entitiesTypeArguments);
+            TypeName superName = ParameterizedTypeName.get(className(Const.DAO_SUPER_NAME), entitiesTypeArguments);
 
 
             Iterable<Symbol> symbols = cls.members().getElements();
@@ -105,7 +105,7 @@ public class DaoAnnotationProcessor extends BaseProcessor {
             methodSpecList.add(builderConstructor(entitiesTypeArguments));
             methodSpecList.add(builderDefaultConstructor(entitiesTypeArguments));
             //生成实现类
-            buildClass(Const.GEN_PKG, className + Const.GEN_CLASS_DAO_NAME, superName, interfaceName, methodSpecList);
+            buildClass(Const.GEN_PKG, className + Const.GEN_CLASS_IMPL_NAME, superName, interfaceName, methodSpecList, null);
         }
 
         messager.printMessage(Diagnostic.Kind.NOTE, "DaoAnnotationProcessor--finish...");
