@@ -61,7 +61,7 @@ abstract class BaseOpenHelper(context: Context, dbName: String, version: Int) :
      */
     fun execUpgradeSQL(db: SQLiteDatabase, simpleName: String, vararg sqlArray: String) {
         if (sqlArray.isEmpty()) {
-            LiteLogUtils.e(TAG, "该表没有需要更新的字段", simpleName)
+            LiteLogUtils.i(TAG, "该表没有需要更新的字段", simpleName)
             return
         }
         db.beginTransaction()
