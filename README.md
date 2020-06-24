@@ -72,10 +72,10 @@ public abstract class AppDatabase extends LiteDatabase {
     abstract public TestJavaDao getTestJavaDao();
 
     public static synchronized AppDatabase getInstance() {
-        return AcPermissionHolder.instance;
+        return ADBHolder.instance;
     }
 
-    private static class AcPermissionHolder {
+    private static class ADBHolder {
         private static final AppDatabase instance = YLite.databaseBuilder(
                 MyApplication.getInstance().getApplicationContext(), AppDatabase.class)
                 .setOpenDexFileLoader(true)

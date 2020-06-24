@@ -12,7 +12,7 @@ import com.jy.simple.bean.TestInfo
 abstract class AppDatabase : LiteDatabase() {
     abstract fun getTestJavaDao(): TestInfoDao
 
-    private object AcPermissionHolder {
+    private object ADBHolder {
         val instance = YLite.databaseBuilder(
             MyApplication.getInstance().applicationContext,
             AppDatabase::class.java
@@ -25,6 +25,6 @@ abstract class AppDatabase : LiteDatabase() {
     companion object {
         @get:Synchronized
         val instance: AppDatabase
-            get() = AcPermissionHolder.instance
+            get() = ADBHolder.instance
     }
 }
