@@ -7,7 +7,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.jy.litedb.api.utils.LiteLogUtils
 import com.jy.simple.bean.TestInfo
-import com.jy.simple.db.TestDao
+import com.jy.simple.db.AppDatabase
 
 
 /**
@@ -43,7 +43,7 @@ class DBSimpleActivity : AppCompatActivity() {
 
     private fun query() {
         val startTime = System.currentTimeMillis()
-        val list = TestDao.getInstance().getListInfo()
+        val list = AppDatabase.instance.getTestJavaDao().getListInfo()
 //        list.forEach {
 //            LiteLogUtils.iFormat(
 //                "单条数据--id：%s--savePath：%s--connectionTime：%s--testFilter：%s--testUpdate：%s--testUpdateTwo：%s",
@@ -79,7 +79,7 @@ class DBSimpleActivity : AppCompatActivity() {
 //        list.add(testInfo)
 //        list.add(testInfo)
 //        list.add(testInfo)
-        TestDao.getInstance().insertOrUpdate(testInfo)
+        AppDatabase.instance.getTestJavaDao().insertOrUpdate(testInfo)
 
         LiteLogUtils.iFormat("插入--用时%sms", System.currentTimeMillis() - startTime)
 
