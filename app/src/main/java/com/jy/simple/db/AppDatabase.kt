@@ -17,7 +17,7 @@ abstract class AppDatabase : LiteDatabase() {
             MyApplication.getInstance().applicationContext,
             AppDatabase::class.java
         )
-            .setOpenDexFileLoader(true)
+            .setOpenDexFileLoader(false)
             .setDBConfig(beginBuilder().setOpenCache(true).build())
             .build()
     }
