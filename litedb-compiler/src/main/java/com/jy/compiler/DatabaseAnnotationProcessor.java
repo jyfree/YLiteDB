@@ -38,7 +38,7 @@ public class DatabaseAnnotationProcessor extends BaseProcessor {
         if (annotations == null || annotations.isEmpty()) {
             return false;
         }
-        ClassName override = ClassName.get("java.lang", "Override");
+
         messager.printMessage(Diagnostic.Kind.NOTE, "DatabaseAnnotationProcessor--processing...");
         for (Element classElement : env.getElementsAnnotatedWith(Database.class)) {
             if (!(classElement instanceof Symbol.ClassSymbol)) {
@@ -82,6 +82,7 @@ public class DatabaseAnnotationProcessor extends BaseProcessor {
                     result.add(ParameterSpec.get(parameter));
                 }
 
+                //********************************
                 /**
                  * 生成代码
                  * 如：
@@ -101,17 +102,17 @@ public class DatabaseAnnotationProcessor extends BaseProcessor {
                 methodBuilder.add("if ($N == null) {\n", returnNominate);
                 methodBuilder.add(" $N = new $N();\n}", returnNominate, returnClassName.simpleName() + Const.GEN_CLASS_IMPL_NAME);
                 methodBuilder.add("return $N;\n}\n}", returnNominate);
+                //********************************
 
-                messager.printMessage(Diagnostic.Kind.NOTE, "DatabaseAnnotationProcessor--add methodName--" + methodName + "--" + returnType.toString());
+                messager.printMessage(Diagnostic.Kind.NOTE, "DatabaseAnnotationProcessor--add methodName--" + methodName);
 
                 //创建方法
-                methodSpecList.add(buildMethod(methodName, ParameterizedTypeName.get(returnType), result, override, methodBuilder.build()));
+                methodSpecList.add(buildMethod(methodName, ParameterizedTypeName.get(returnType), result, getOverrideClassName(), methodBuilder.build()));
                 //创建属性
                 fieldSpecList.add(buildFieldSpec(returnClassName, returnNominate));
             }
             //创建父类抽象方法 createOpenHelper
-            buildSuperAbstractMethod(classElement, override, methodSpecList);
-
+            buildSuperAbstractMethod(classElement, methodSpecList);
 
             buildClass(Const.GEN_PKG, className + Const.GEN_CLASS_IMPL_NAME, className(superName), null, methodSpecList, fieldSpecList);
 
@@ -137,10 +138,9 @@ public class DatabaseAnnotationProcessor extends BaseProcessor {
      * @return
      */
     private FieldSpec buildFieldSpec(ClassName className, String nominate) {
-        FieldSpec fieldSpec = FieldSpec.builder(className, nominate)
+        return FieldSpec.builder(className, nominate)
                 .addModifiers(Modifier.PRIVATE, Modifier.VOLATILE)
                 .build();
-        return fieldSpec;
     }
 
     /**
@@ -166,10 +166,10 @@ public class DatabaseAnnotationProcessor extends BaseProcessor {
      * }
      * </pre>
      *
-     * @param override       重写
+     * @param classElement   元素
      * @param methodSpecList 方法集
      */
-    private void buildSuperAbstractMethod(Element classElement, ClassName override, List<MethodSpec> methodSpecList) {
+    private void buildSuperAbstractMethod(Element classElement, List<MethodSpec> methodSpecList) {
 
         Database database = classElement.getAnnotation(Database.class);
         if (database == null) {
@@ -179,19 +179,17 @@ public class DatabaseAnnotationProcessor extends BaseProcessor {
         int version = database.version();
         List<? extends TypeMirror> entitiesTypeMirror = Utils.getDatabaseEntities(classElement);
 
-        //创建父类抽象方法
-        CodeBlock.Builder builder = CodeBlock.builder();
-        List<ParameterSpec> result = new ArrayList<>();
-
         ClassName baseOpenHelperClass = ClassName.get(Const.API_PACKAGE, Const.BASE_OPEN_HELPER_CLASS);
         ClassName context = ClassName.get("android.content", "Context");
 
+        List<ParameterSpec> result = new ArrayList<>();
         result.add(ParameterSpec.builder(context, "context").build());
-        builder.addStatement("$T baseOpenHelper = $L", baseOpenHelperClass, buildBaseOpenHelper(baseOpenHelperClass, entitiesTypeMirror, name, version));
 
+        CodeBlock.Builder builder = CodeBlock.builder();
+        builder.addStatement("$T baseOpenHelper = $L", baseOpenHelperClass, buildBaseOpenHelper(baseOpenHelperClass, entitiesTypeMirror, name, version));
         builder.addStatement("return baseOpenHelper");
 
-        methodSpecList.add(buildMethod("createOpenHelper", baseOpenHelperClass, result, override, builder.build()));
+        methodSpecList.add(buildMethod("createOpenHelper", baseOpenHelperClass, result, getOverrideClassName(), builder.build()));
 
     }
 

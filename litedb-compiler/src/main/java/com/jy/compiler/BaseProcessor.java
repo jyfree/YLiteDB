@@ -100,6 +100,14 @@ public abstract class BaseProcessor extends AbstractProcessor {
         return isConcreteType(element) && isSubType(element, typeMirror);
     }
 
+    /**
+     * Override 注解
+     *
+     * @return
+     */
+    public ClassName getOverrideClassName() {
+        return ClassName.get("java.lang", "Override");
+    }
 
     /**
      * 生成通用代码（单个方法）
@@ -155,8 +163,9 @@ public abstract class BaseProcessor extends AbstractProcessor {
      * @param packageName    包名
      * @param genClassName   生成的类名
      * @param superName      继承类
-     * @param interfaceName  实现类
-     * @param methodSpecList 方法集合
+     * @param interfaceName  实现类(可为null)
+     * @param methodSpecList 方法集合(可为null)
+     * @param fieldSpecList  属性集合(可为null)
      */
     public void buildClass(String packageName, String genClassName, TypeName superName, String interfaceName, List<MethodSpec> methodSpecList, List<FieldSpec> fieldSpecList) {
 

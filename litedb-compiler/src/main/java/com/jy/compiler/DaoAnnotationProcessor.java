@@ -39,8 +39,6 @@ public class DaoAnnotationProcessor extends BaseProcessor {
         }
         messager.printMessage(Diagnostic.Kind.NOTE, "DaoAnnotationProcessor--processing...");
 
-        ClassName override = ClassName.get("java.lang", "Override");
-
 
         for (Element classElement : env.getElementsAnnotatedWith(Dao.class)) {
             if (!(classElement instanceof Symbol.ClassSymbol)) {
@@ -97,7 +95,7 @@ public class DaoAnnotationProcessor extends BaseProcessor {
                     messager.printMessage(Diagnostic.Kind.NOTE, "DaoAnnotationProcessor--add methodName--" + methodName);
 
                     //创建方法
-                    methodSpecList.add(buildMethod(methodName, ParameterizedTypeName.get(returnType), result, override, methodBuilder.build()));
+                    methodSpecList.add(buildMethod(methodName, ParameterizedTypeName.get(returnType), result, getOverrideClassName(), methodBuilder.build()));
 
                 }
             }
@@ -213,7 +211,7 @@ public class DaoAnnotationProcessor extends BaseProcessor {
         return MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(superName, "subClass")
-                .addCode("super(subClass);", "")
+                .addCode("super(subClass);")
                 .build();
     }
 
