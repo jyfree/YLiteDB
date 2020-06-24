@@ -48,6 +48,8 @@ public class TestJava {
 ```
 
 二、创建dao接口
+
+```Java
 @Dao(entities = TestJava.class)
 public interface TestJavaDao extends IDao<TestJava> {
     @Query("SELECT * FROM TestJava WHERE url = :url")
@@ -59,8 +61,11 @@ public interface TestJavaDao extends IDao<TestJava> {
     @Query("SELECT * FROM TestJava WHERE url = :str and id = :i")
     TestJava getTestJava(String str, int i);
 }
+```
 
 三、创建AppDatabase
+
+```Java
 @Database(entities = {TestJava.class}, name = "app.db", version = 1)
 public abstract class AppDatabase extends LiteDatabase {
 
@@ -78,9 +83,13 @@ public abstract class AppDatabase extends LiteDatabase {
                 .build();
     }
 }
+```
 
 四、使用
+
+```Java
 AppDatabase.getInstance().getTestJavaDao().getTestJava("123");
+```
 
 
 
