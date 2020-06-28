@@ -85,17 +85,33 @@ public class FieldInfoAnnotationProcessor extends BaseProcessor {
                     isCompareField = scope.isCompareField();
                 }
 
-                builder.addStatement("map.put($S,new $T($S,$L,$L,$L,$L,$L,$L,$L))",
-                        name,
-                        dbFieldInfo,
-                        name,
-                        type + ".class",
-                        isPrimaryKey,
-                        isAutoKey,
-                        isUpdateField,
-                        updateFieldVersion,
-                        isFilter,
-                        isCompareField);
+                //若为泛型，则不存储该类型，置为null
+                if (type.isParameterized()) {
+                    builder.addStatement("map.put($S,new $T($S,$L,$L,$L,$L,$L,$L,$L))",
+                            name,
+                            dbFieldInfo,
+                            name,
+                            null,
+                            isPrimaryKey,
+                            isAutoKey,
+                            isUpdateField,
+                            updateFieldVersion,
+                            isFilter,
+                            isCompareField);
+                } else {
+                    builder.addStatement("map.put($S,new $T($S,$L,$L,$L,$L,$L,$L,$L))",
+                            name,
+                            dbFieldInfo,
+                            name,
+                            type + ".class",
+                            isPrimaryKey,
+                            isAutoKey,
+                            isUpdateField,
+                            updateFieldVersion,
+                            isFilter,
+                            isCompareField);
+                }
+
 
                 messager.printMessage(Diagnostic.Kind.NOTE, "FieldInfoAnnotationProcessor--name--"
                         + name + "--type--" + type);
