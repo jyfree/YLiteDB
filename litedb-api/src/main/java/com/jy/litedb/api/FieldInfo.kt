@@ -8,7 +8,7 @@ package com.jy.litedb.api
  */
 data class FieldInfo(
     var name: String,
-    var type: Class<*>,
+    var type: Class<*>?,
     var isPrimaryKey: Boolean,
     var isAutoKey: Boolean,
     var isUpdateField: Boolean,
