@@ -25,6 +25,7 @@ abstract class BaseSuperDao<T> : IDao<T> {
      */
     abstract val tableName: String
 
+    abstract val database: LiteDatabase
 
     /**
      * 插入单条数据
@@ -34,18 +35,18 @@ abstract class BaseSuperDao<T> : IDao<T> {
     @Synchronized
     override fun insert(item: T) {
         try {
-            val db = DBManager.getInstance().openDatabase()
+            val db = database.openDatabase()
             if (db.isOpen) {
                 db.insert(tableName, null, getContentValues(item))
             }
             //加入缓存
-            if (DBManager.getInstance().getDBConfig()?.isOpenCache == true) {
+            if (database.dbConfig?.isOpenCache == true) {
                 addCache(item)
             }
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {
-            DBManager.getInstance().closeDatabase()
+            database.closeDatabase()
         }
     }
 
@@ -57,7 +58,7 @@ abstract class BaseSuperDao<T> : IDao<T> {
     @Synchronized
     override fun insert(dataList: ArrayList<T>) {
         try {
-            val db = DBManager.getInstance().openDatabase()
+            val db = database.openDatabase()
             if (db.isOpen) {
                 db.beginTransaction() // 手动设置开始事务
 
@@ -71,13 +72,13 @@ abstract class BaseSuperDao<T> : IDao<T> {
                 db.endTransaction() // 处理完成
             }
             //加入缓存
-            if (DBManager.getInstance().getDBConfig()?.isOpenCache == true) {
-                DBManager.getInstance().cache.putList(tableName, dataList)
+            if (database.dbConfig?.isOpenCache == true) {
+                database.cache?.putList(tableName, dataList)
             }
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {
-            DBManager.getInstance().closeDatabase()
+            database.closeDatabase()
         }
     }
 
@@ -91,7 +92,7 @@ abstract class BaseSuperDao<T> : IDao<T> {
         val tmpList = getListInfo()
 
         try {
-            val db = DBManager.getInstance().openDatabase()
+            val db = database.openDatabase()
             if (db.isOpen) {
                 //db是否存在此数据
                 var isExist = false
@@ -111,14 +112,14 @@ abstract class BaseSuperDao<T> : IDao<T> {
                 }
                 tmpList.add(item)
                 //加入缓存
-                if (DBManager.getInstance().getDBConfig()?.isOpenCache == true) {
-                    DBManager.getInstance().cache.putList(tableName, tmpList)
+                if (database.dbConfig?.isOpenCache == true) {
+                    database.cache?.putList(tableName, tmpList)
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {
-            DBManager.getInstance().closeDatabase()
+            database.closeDatabase()
         }
     }
 
@@ -134,7 +135,7 @@ abstract class BaseSuperDao<T> : IDao<T> {
         cacheList.addAll(tmpList)
 
         try {
-            val db = DBManager.getInstance().openDatabase()
+            val db = database.openDatabase()
             if (db.isOpen) {
                 db.beginTransaction() // 手动设置开始事务
 
@@ -164,14 +165,14 @@ abstract class BaseSuperDao<T> : IDao<T> {
                 db.endTransaction() // 处理完成
 
                 //加入缓存
-                if (DBManager.getInstance().getDBConfig()?.isOpenCache == true) {
-                    DBManager.getInstance().cache.putList(tableName, cacheList)
+                if (database.dbConfig?.isOpenCache == true) {
+                    database.cache?.putList(tableName, cacheList)
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {
-            DBManager.getInstance().closeDatabase()
+            database.closeDatabase()
         }
     }
 
@@ -186,7 +187,7 @@ abstract class BaseSuperDao<T> : IDao<T> {
         var cursor: Cursor? = null
 
         try {
-            val db = DBManager.getInstance().openDatabase()
+            val db = database.openDatabase()
             cursor = db.query(tableName, null, null, null, null, null, null)
 
             if (db.isOpen) {
@@ -202,7 +203,7 @@ abstract class BaseSuperDao<T> : IDao<T> {
             e.printStackTrace()
         } finally {
             cursor?.close()
-            DBManager.getInstance().closeDatabase()
+            database.closeDatabase()
         }
         return map
 
@@ -215,7 +216,7 @@ abstract class BaseSuperDao<T> : IDao<T> {
      * @return
      */
     private fun getList(): ArrayList<T> {
-        val db = DBManager.getInstance().openDatabase()
+        val db = database.openDatabase()
         val cursor = db.query(tableName, null, null, null, null, null, null)
         return queryList(db, cursor)
     }
@@ -224,11 +225,11 @@ abstract class BaseSuperDao<T> : IDao<T> {
      * 插入缓存
      */
     private fun addCache(item: T) {
-        var list = DBManager.getInstance().cache.getList(tableName)
+        var list = database.cache?.getList(tableName)
         if (null == list) {
             list = ArrayList<T>()
             list.add(item)
-            DBManager.getInstance().cache.putList(tableName, list)
+            database.cache?.putList(tableName, list)
         } else {
             list as ArrayList<T>
             list.add(item)
@@ -241,13 +242,13 @@ abstract class BaseSuperDao<T> : IDao<T> {
      *
      */
     override fun getListInfo(): ArrayList<T> {
-        return if (DBManager.getInstance().getDBConfig()?.isOpenCache == true) {
-            var list = DBManager.getInstance().cache.getList(tableName)
+        return if (database.dbConfig?.isOpenCache == true) {
+            var list = database.cache?.getList(tableName)
             LiteLogUtils.i("db缓存", list?.size)
             if (list.isNullOrEmpty()) {
                 list = getList()
                 //加入内存缓存
-                DBManager.getInstance().cache.putList(tableName, list)
+                database.cache?.putList(tableName, list)
             }
             list as ArrayList<T>
         } else {
@@ -273,7 +274,7 @@ abstract class BaseSuperDao<T> : IDao<T> {
             e.printStackTrace()
         } finally {
             cursor?.close()
-            DBManager.getInstance().closeDatabase()
+            database.closeDatabase()
         }
         return msgList
 
@@ -295,7 +296,7 @@ abstract class BaseSuperDao<T> : IDao<T> {
             e.printStackTrace()
         } finally {
             cursor?.close()
-            DBManager.getInstance().closeDatabase()
+            database.closeDatabase()
         }
         return t
     }
@@ -322,14 +323,14 @@ abstract class BaseSuperDao<T> : IDao<T> {
     override fun deleteAll() {
 
         try {
-            val db = DBManager.getInstance().openDatabase()
+            val db = database.openDatabase()
             if (db.isOpen) {
                 db.delete(tableName, null, null)
             }
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {
-            DBManager.getInstance().closeDatabase()
+            database.closeDatabase()
         }
 
     }

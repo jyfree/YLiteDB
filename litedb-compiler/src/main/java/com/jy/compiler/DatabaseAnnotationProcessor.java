@@ -91,7 +91,7 @@ public class DatabaseAnnotationProcessor extends BaseProcessor {
                  *   } else {
                  *      synchronized (this) {
                  *          if (_TestJavaDao == null) {
-                 *               _TestJavaDao = new TestJavaDao_Impl();
+                 *               _TestJavaDao = new TestJavaDao_Impl(this);
                  *           }
                  *       return _TestJavaDao;
                  *       }
@@ -100,7 +100,7 @@ public class DatabaseAnnotationProcessor extends BaseProcessor {
                 methodBuilder.add("if ($N != null) {\n return $N;\n}", returnNominate, returnNominate);
                 methodBuilder.add("else{\nsynchronized (this) {\n");
                 methodBuilder.add("if ($N == null) {\n", returnNominate);
-                methodBuilder.add(" $N = new $N();\n}", returnNominate, returnClassName.simpleName() + Const.GEN_CLASS_IMPL_NAME);
+                methodBuilder.add(" $N = new $N(this);\n}", returnNominate, returnClassName.simpleName() + Const.GEN_CLASS_IMPL_NAME);
                 methodBuilder.add("return $N;\n}\n}", returnNominate);
                 //********************************
 

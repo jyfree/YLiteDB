@@ -148,14 +148,13 @@ public class DaoAnnotationProcessor extends BaseProcessor {
     /**
      * 生成db对象
      * 例子：
-     * SQLiteDatabase db = DBManager.Companion.getInstance().openDatabase();
+     * SQLiteDatabase db = getDatabase().openDatabase();
      *
      * @param methodBuilder
      */
     private void builderDB(CodeBlock.Builder methodBuilder) {
-        ClassName dbManager = ClassName.get(Const.API_PACKAGE, Const.DB_MANAGER_CLASS);
         ClassName sqLiteDatabase = ClassName.get("android.database.sqlite", "SQLiteDatabase");
-        methodBuilder.addStatement("$T db = $T.Companion.getInstance().openDatabase()", sqLiteDatabase, dbManager);
+        methodBuilder.addStatement("$T db = getDatabase().openDatabase()", sqLiteDatabase);
     }
 
     /**
@@ -194,8 +193,8 @@ public class DaoAnnotationProcessor extends BaseProcessor {
      * 如：
      * <pre>
      * public class TestJavaDao_Impl extends BaseDao<TestJava> implements TestJavaDao {
-     *     public TestJavaDao_Impl(Class<TestJava> subClass) {
-     *         super(subClass);
+     *     public TestJavaDao_Impl(Class<TestJava> subClass, LiteDatabase database) {
+     *         super(subClass, database);
      *     }
      * }
      * </pre>
@@ -207,11 +206,13 @@ public class DaoAnnotationProcessor extends BaseProcessor {
         ClassName strClass = ClassName.get("java.lang", "Class");
         //父类，如：Class<TestJava>
         TypeName superName = ParameterizedTypeName.get(strClass, typeName);
+        ClassName database = ClassName.get(Const.API_PACKAGE, Const.DATABASE_CLASS);
 
         return MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(superName, "subClass")
-                .addCode("super(subClass);")
+                .addParameter(database, "database")
+                .addCode("super(subClass,database);")
                 .build();
     }
 
@@ -220,9 +221,9 @@ public class DaoAnnotationProcessor extends BaseProcessor {
      * 如：
      * <pre>
      * public class TestJavaDao_Impl extends BaseDao<TestJava> implements TestJavaDao {
-     *    public TestJavaDao_Impl() {
-     *       super(TestJava.class);
-     *      }
+     *    public TestJavaDao_Impl(LiteDatabase database) {
+     *         super(TestJava.class, database);
+     *     }
      * }
      * </pre>
      *
@@ -230,10 +231,11 @@ public class DaoAnnotationProcessor extends BaseProcessor {
      * @return
      */
     private MethodSpec builderDefaultConstructor(TypeName typeName) {
-
+        ClassName database = ClassName.get(Const.API_PACKAGE, Const.DATABASE_CLASS);
         return MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
-                .addCode("super($T.class);", typeName)
+                .addParameter(database, "database")
+                .addCode("super($T.class,database);", typeName)
                 .build();
     }
 }

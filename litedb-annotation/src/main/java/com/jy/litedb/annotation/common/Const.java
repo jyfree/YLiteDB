@@ -22,7 +22,7 @@ public class Const {
 
     //dao生成实现类
     public static final String DAO_SUPER_NAME = API_PACKAGE + ".BaseDao";
-    public static final String DB_MANAGER_CLASS = "DBManager";
+    public static final String DATABASE_CLASS = "LiteDatabase";
 
     //AppDatabase生成实现类
     public static final String BASE_OPEN_HELPER_CLASS = "BaseOpenHelper";

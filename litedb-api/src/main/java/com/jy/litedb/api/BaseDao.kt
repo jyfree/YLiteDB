@@ -11,12 +11,19 @@ import android.database.sqlite.SQLiteDatabase
  * @Date 2019/10/26-14:35
  * @TODO 公共增删改查db
  */
-open class BaseDao<T : Any> constructor(private var subClass: Class<T>) : BaseSuperDao<T>() {
+open class BaseDao<T : Any> constructor(
+    private var subClass: Class<T>,
+    private val liteDatabase: LiteDatabase
+) :
+    BaseSuperDao<T>() {
 
     private var hashMap: HashMap<String, FieldInfo> = LoaderFieldInfo.getFieldMapInfo(subClass)
 
     override val tableName: String
         get() = subClass.simpleName
+
+    override val database: LiteDatabase
+        get() = liteDatabase
 
     private val subClassFields = subClass.declaredFields
 
