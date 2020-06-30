@@ -11,18 +11,18 @@ YLiteDB封装了sqlite，利用注解实现表的创建、查询、插入等，�
 
 ## gradle引入方式
  一、注解：
- implementation 'com.jy.litedb:litedb-annotation:1.1.0'
+ implementation 'com.jy.litedb:litedb-annotation:1.1.2'
 
  二、apt生成java代码:
- implementation 'com.jy.litedb:litedb-compiler:1.1.0'
+ implementation 'com.jy.litedb:litedb-compiler:1.1.3'
 
  三、api库：
- implementation 'com.jy.litedb:litedb-api:1.1.0'
+ implementation 'com.jy.litedb:litedb-api:1.1.4'
 
  四、asm字节码插件：
 
  根目录build.gradle：
- classpath "com.jy.litedb:litedb-plugin:1.0.3"
+ classpath "com.jy.litedb:litedb-plugin:1.0.4"
 
  module引入：
  apply plugin: 'YLiteDB'
@@ -92,6 +92,11 @@ AppDatabase.getInstance().getTestJavaDao().getTestJava("123");
 ```
 
 
+## 协程或子线程使用：
 
+1、实现CoroutineRequest可以使用协程访问数据库
+2、实现ThreadRequest可以使用子线程访问数据库
+
+可参考YLibrary中数据库的使用示例，https://github.com/jyfree/YLibrary
 
 
