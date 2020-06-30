@@ -92,12 +92,15 @@ AppDatabase.getInstance().getTestJavaDao().getTestJava("123");
 ```
 
 
-## 协程或子线程使用：
+## 协程或子线程使用
+
+可参考YLibrary中数据库的使用示例，https://github.com/jyfree/YLibrary
+
+YLibrary使用：
 
 1、实现CoroutineRequest可以使用协程访问数据库
 
 2、实现ThreadRequest可以使用子线程访问数据库
 
-可参考YLibrary中数据库的使用示例，https://github.com/jyfree/YLibrary
 
 
