@@ -6,8 +6,9 @@ import com.jy.litedb.annotation.Scope;
 @DBEntity
 public class TestJava {
     @Scope(isPrimaryKey = true, isAutoKey = true)
-    int id = 0;
+    public int id = 0;
     @Scope(isCompareField = true)
-    String url;
-    String msg;
+    public String url;
+    public String msg;
+    public boolean flag;
 }

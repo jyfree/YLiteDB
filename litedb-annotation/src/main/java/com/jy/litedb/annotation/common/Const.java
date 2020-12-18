@@ -15,6 +15,7 @@ public class Const {
     //field生成相关
     public static final String GEN_PKG_FIELD = GEN_PKG + ".field";
     public static final String INIT_METHOD = "init";
+    public static final String GEN_PKG_FIELD_INFO = "com.jy.litedb.annotation.common";
     public static final String GEN_CLASS_FIELD_INFO_NAME = "FieldInfo" + SPLITTER;
     public static final String FIELD_INFO_CLASS = "FieldInfo";
     public static final String LOADER_FIELD_INFO_CLASS = "LoaderFieldInfo";

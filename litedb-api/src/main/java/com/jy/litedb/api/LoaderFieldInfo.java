@@ -3,6 +3,7 @@ package com.jy.litedb.api;
 import android.content.Context;
 
 import com.jy.litedb.annotation.common.Const;
+import com.jy.litedb.annotation.common.FieldInfo;
 import com.jy.litedb.api.utils.ClassUtils;
 import com.jy.litedb.api.utils.LazyInitHelper;
 import com.jy.litedb.api.utils.LiteLogUtils;

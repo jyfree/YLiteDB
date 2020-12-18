@@ -2,6 +2,7 @@ package com.jy.compiler;
 
 import com.jy.litedb.annotation.Dao;
 import com.jy.litedb.annotation.Database;
+import com.sun.tools.javac.code.Type;
 
 import java.util.List;
 
@@ -48,5 +49,32 @@ public class Utils {
             }
         }
         return value;
+    }
+
+    public static Class<?> wrapper(Type type) {
+
+        String typeName = type.toString().toLowerCase();
+
+        if (typeName.contains("boolean")) {
+            return boolean.class;
+        } else if (typeName.contains("string")) {
+            return String.class;
+        } else if (typeName.contains("short")) {
+            return short.class;
+        } else if (typeName.contains("int")) {
+            return int.class;
+        } else if (typeName.contains("long")) {
+            return long.class;
+        } else if (typeName.contains("char")) {
+            return char.class;
+        } else if (typeName.contains("float")) {
+            return float.class;
+        } else if (typeName.contains("double")) {
+            return double.class;
+        } else if (typeName.contains("byte")) {
+            return byte.class;
+        } else {
+            return Object.class;
+        }
     }
 }

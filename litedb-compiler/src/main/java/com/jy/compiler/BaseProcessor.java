@@ -10,6 +10,7 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.List;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -211,6 +212,30 @@ public abstract class BaseProcessor extends AbstractProcessor {
      * @return
      */
     public MethodSpec buildMethod(String methodName, TypeName returnType, Iterable<ParameterSpec> parameterSpecs, ClassName annotation, CodeBlock code) {
+        MethodSpec.Builder builder = MethodSpec.methodBuilder(methodName)
+                .addModifiers(Modifier.PUBLIC)
+                .returns(returnType)
+                .addCode(code);
+        if (parameterSpecs != null) {
+            builder.addParameters(parameterSpecs);
+        }
+        if (annotation != null) {
+            builder.addAnnotation(annotation);
+        }
+        return builder.build();
+    }
+
+    /**
+     * 创建方法
+     *
+     * @param methodName     方法名
+     * @param returnType     返回类型
+     * @param parameterSpecs 参数集(可为null)
+     * @param annotation     注解(可为null)
+     * @param code           方法代码
+     * @return
+     */
+    public MethodSpec buildMethod(String methodName, Type returnType, Iterable<ParameterSpec> parameterSpecs, ClassName annotation, CodeBlock code) {
         MethodSpec.Builder builder = MethodSpec.methodBuilder(methodName)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(returnType)
