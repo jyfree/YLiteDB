@@ -124,6 +124,7 @@ public class DaoFieldAnnotationProcessor extends BaseProcessor {
                 int updateFieldVersion = 1;
                 boolean isFilter = false;
                 boolean isCompareField = false;
+                boolean isPrivate = symbol.isPrivate();
                 Type type = symbol.type;
                 String name = symbol.name.toString();
 
@@ -145,7 +146,7 @@ public class DaoFieldAnnotationProcessor extends BaseProcessor {
 
                 //若为泛型，则不存储该类型，置为null
                 if (type.isParameterized()) {
-                    builder.addStatement("map.put($S,new $T($S,$L,$L,$L,$L,$L,$L,$L))",
+                    builder.addStatement("map.put($S,new $T($S,$L,$L,$L,$L,$L,$L,$L,$L))",
                             name,
                             dbFieldInfo,
                             name,
@@ -155,9 +156,10 @@ public class DaoFieldAnnotationProcessor extends BaseProcessor {
                             isUpdateField,
                             updateFieldVersion,
                             isFilter,
-                            isCompareField);
+                            isCompareField,
+                            isPrivate);
                 } else {
-                    builder.addStatement("map.put($S,new $T($S,$L,$L,$L,$L,$L,$L,$L))",
+                    builder.addStatement("map.put($S,new $T($S,$L,$L,$L,$L,$L,$L,$L,$L))",
                             name,
                             dbFieldInfo,
                             name,
@@ -167,15 +169,16 @@ public class DaoFieldAnnotationProcessor extends BaseProcessor {
                             isUpdateField,
                             updateFieldVersion,
                             isFilter,
-                            isCompareField);
+                            isCompareField,
+                            isPrivate);
                 }
 
                 //保存每个字段的信息
                 fieldMap.put(name, new FieldInfo(name, type.isParameterized() ? null : Utils.wrapper(type),
-                        isPrimaryKey, isAutoKey, isUpdateField, updateFieldVersion, isFilter, isCompareField));
+                        isPrimaryKey, isAutoKey, isUpdateField, updateFieldVersion, isFilter, isCompareField, isPrivate));
 
                 messager.printMessage(Diagnostic.Kind.NOTE, "FieldProcessor--name--"
-                        + name + "--type--" + type);
+                        + name + "--type--" + type + "--isPrivate--" + isPrivate);
             }
             //保存该类的信息
             allFieldInfoMap.put(className, fieldMap);
@@ -314,6 +317,7 @@ public class DaoFieldAnnotationProcessor extends BaseProcessor {
         CodeBlock.Builder compareItemCode = CodeBlock.builder();
         CodeBlock.Builder updateItemCode = CodeBlock.builder();
 
+        ///****************
         contentValuesCode.add("ContentValues contentValues = new ContentValues();\n");
         itemInfoCode.add("$T $N = new $T();\n", daoInfo.entitiesClassName, entitiesClassNameToLowerCase, daoInfo.entitiesClassName);
 
@@ -331,41 +335,25 @@ public class DaoFieldAnnotationProcessor extends BaseProcessor {
                 if (value.isCompareField) {
                     compareField = value;
                 }
-                String itemInfoFormat;
-                if (value.type == int.class) {
-                    itemInfoFormat = "$N.$N = getInt(cursor,$S);\n";
-                } else if (value.type == long.class) {
-                    itemInfoFormat = "$N.$N = getLong(cursor,$S);\n";
-                } else if (value.type == float.class) {
-                    itemInfoFormat = "$N.$N = getFloat(cursor,$S);\n";
-                } else if (value.type == String.class) {
-                    itemInfoFormat = "$N.$N = getString(cursor,$S);\n";
-                } else if (value.type == boolean.class) {
-                    itemInfoFormat = "$N.$N = getInt(cursor, $S) == 1;\n";
-                } else if (value.type == double.class) {
-                    itemInfoFormat = "$N.$N = getDouble(cursor,$S);\n";
-                } else {
-                    itemInfoFormat = "$N.$N = getString(cursor,$S);\n";
-                }
-                if (value.type == boolean.class) {
-                    contentValuesCode.add("contentValues.put($S, $N.$N ?1:0);\n", value.name, entitiesClassNameToLowerCase, value.name);
-                } else {
-                    contentValuesCode.add("contentValues.put($S, $N.$N);\n", value.name, entitiesClassNameToLowerCase, value.name);
-                }
-                itemInfoCode.add(itemInfoFormat, entitiesClassNameToLowerCase, value.name, value.name);
+                String captureName = wrapperName(value.name, value.isPrivate);
+                contentValuesCode.add(getContentValuesFormat(value), value.name, entitiesClassNameToLowerCase, captureName);
+                itemInfoCode.add(getItemInfoFormat(value), entitiesClassNameToLowerCase, captureName, value.name);
             }
         }
         contentValuesCode.add("return contentValues;\n");
         itemInfoCode.add("return $N;\n", entitiesClassNameToLowerCase);
+        ///****************
+
         if (compareField != null) {
+            String captureName = wrapperName(compareField.name, compareField.isPrivate);
             if (compareField.type == String.class) {
-                compareItemCode.add("String value1 = item1.$N;\nString value2 = item2.$N;\n", compareField.name, compareField.name);
+                compareItemCode.add(getCompareItemFormat(compareField), captureName, captureName);
                 compareItemCode.add("if ($T.isEmpty(value1) || $T.isEmpty(value2)) \n return false;\n", textUtils, textUtils);
                 compareItemCode.add("return value1.equals(value2);\n");
             } else {
-                compareItemCode.add("return item1.$N==item2.$N;\n", compareField.name, compareField.name);
+                compareItemCode.add(getCompareItemFormat(compareField), captureName, captureName);
             }
-            updateItemCode.add("db.update(getTableName(), getContentValues(item), \"$N = ?\", new String[]{item.$N});\n", compareField.name, compareField.name);
+            updateItemCode.add(getUpdateItemFormat(compareField), compareField.name, captureName);
         } else {
             compareItemCode.add("return false;\n");
         }
@@ -408,5 +396,108 @@ public class DaoFieldAnnotationProcessor extends BaseProcessor {
                 .returns(TypeName.VOID)
                 .addCode(updateItemCode.build());
         daoInfo.methodSpecList.add(updateItemBuilder.build());
+    }
+
+    private String getContentValuesFormat(FieldInfo value) {
+        String format;
+        if (value.isPrivate) {
+            if (value.type == boolean.class) {
+                format = "contentValues.put($S, $N.get$N() ?1:0);\n";
+            } else {
+                format = "contentValues.put($S, $N.get$N());\n";
+            }
+        } else {
+            if (value.type == boolean.class) {
+                format = "contentValues.put($S, $N.$N ?1:0);\n";
+            } else {
+                format = "contentValues.put($S, $N.$N);\n";
+            }
+        }
+        return format;
+    }
+
+    private String getItemInfoFormat(FieldInfo value) {
+        if (value.isPrivate) {
+            return getItemInfoFormatToPrivate(value);
+        } else {
+            return getItemInfoFormatToPublic(value);
+        }
+    }
+
+    private String getItemInfoFormatToPublic(FieldInfo value) {
+        String format;
+        if (value.type == int.class) {
+            format = "$N.$N = getInt(cursor,$S);\n";
+        } else if (value.type == long.class) {
+            format = "$N.$N = getLong(cursor,$S);\n";
+        } else if (value.type == float.class) {
+            format = "$N.$N = getFloat(cursor,$S);\n";
+        } else if (value.type == String.class) {
+            format = "$N.$N = getString(cursor,$S);\n";
+        } else if (value.type == boolean.class) {
+            format = "$N.$N = getInt(cursor, $S) == 1;\n";
+        } else if (value.type == double.class) {
+            format = "$N.$N = getDouble(cursor,$S);\n";
+        } else {
+            format = "$N.$N = getString(cursor,$S);\n";
+        }
+        return format;
+    }
+
+    private String getItemInfoFormatToPrivate(FieldInfo value) {
+        String format;
+        if (value.type == int.class) {
+            format = "$N.set$N(getInt(cursor,$S));\n";
+        } else if (value.type == long.class) {
+            format = "$N.set$N(getLong(cursor,$S));\n";
+        } else if (value.type == float.class) {
+            format = "$N.set$N(getFloat(cursor,$S));\n";
+        } else if (value.type == String.class) {
+            format = "$N.set$N(getString(cursor,$S));\n";
+        } else if (value.type == boolean.class) {
+            format = "$N.set$N(getInt(cursor,$S));\n";
+        } else if (value.type == double.class) {
+            format = "$N.set$N(getDouble(cursor,$S));\n";
+        } else {
+            format = "$N.set$N(getString(cursor,$S));\n";
+        }
+        return format;
+    }
+
+    private String getCompareItemFormat(FieldInfo value) {
+        String format;
+        if (value.isPrivate) {
+            if (value.type == String.class) {
+                format = "String value1 = item1.get$N();\nString value2 = item2.get$N();\n";
+            } else {
+                format = "return item1.get$N()==item2.get$N();\n";
+            }
+        } else {
+            if (value.type == String.class) {
+                format = "String value1 = item1.$N;\nString value2 = item2.$N;\n";
+            } else {
+                format = "return item1.$N==item2.$N;\n";
+            }
+        }
+        return format;
+    }
+
+    private String getUpdateItemFormat(FieldInfo value) {
+        if (value.isPrivate) {
+            return "db.update(getTableName(), getContentValues(item), \"$N = ?\", new String[]{item.get$N()});\n";
+        } else {
+            return "db.update(getTableName(), getContentValues(item), \"$N = ?\", new String[]{item.$N});\n";
+        }
+    }
+
+    //首字母大写
+    private String wrapperName(String name, boolean isPrivate) {
+        if (isPrivate) {
+            char[] cs = name.toCharArray();
+            cs[0] -= 32;
+            return String.valueOf(cs);
+        } else {
+            return name;
+        }
     }
 }

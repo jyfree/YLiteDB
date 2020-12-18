@@ -9,8 +9,10 @@ public class FieldInfo {
     public int updateFieldVersion = 1;
     public boolean isFilter = false;
     public boolean isCompareField = false;
+    public boolean isPrivate = false;
 
-    public FieldInfo(String name, Class<?> type, boolean isPrimaryKey, boolean isAutoKey, boolean isUpdateField, int updateFieldVersion, boolean isFilter, boolean isCompareField) {
+    public FieldInfo(String name, Class<?> type, boolean isPrimaryKey, boolean isAutoKey,
+                     boolean isUpdateField, int updateFieldVersion, boolean isFilter, boolean isCompareField, boolean isPrivate) {
         this.name = name;
         this.type = type;
         this.isPrimaryKey = isPrimaryKey;
@@ -19,5 +21,6 @@ public class FieldInfo {
         this.updateFieldVersion = updateFieldVersion;
         this.isFilter = isFilter;
         this.isCompareField = isCompareField;
+        this.isPrivate = isPrivate;
     }
 }
