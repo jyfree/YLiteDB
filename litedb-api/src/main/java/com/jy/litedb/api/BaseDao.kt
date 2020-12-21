@@ -12,9 +12,12 @@ import kotlin.collections.ArrayList
 
  * @Author Administrator
  * @Date 2019/10/26-13:24
- * @TODO 数据库表超类
+ * @TODO 数据库表基类
  */
 abstract class BaseDao<T> : IDao<T> {
+    /**
+     * 表字段位置map，加快数据库查询速度
+     */
     private val hashMap = HashMap<String, Int>()
 
     /**
@@ -24,6 +27,9 @@ abstract class BaseDao<T> : IDao<T> {
      */
     abstract val tableName: String
 
+    /**
+     * 数据库对象
+     */
     abstract val database: LiteDatabase
 
     /**
