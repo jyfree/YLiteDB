@@ -29,4 +29,5 @@ class TestInfo {
     var testUpdateTwo: String? = null
     @Scope(isFilter = true)
     var testFilter: String? = null
+    var updateProgressTest: Boolean = false
 }

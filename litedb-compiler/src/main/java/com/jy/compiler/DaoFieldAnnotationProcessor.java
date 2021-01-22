@@ -455,7 +455,7 @@ public class DaoFieldAnnotationProcessor extends BaseProcessor {
         } else if (value.type == String.class) {
             format = "$N.set$N(getString(cursor,$S));\n";
         } else if (value.type == boolean.class) {
-            format = "$N.set$N(getInt(cursor,$S));\n";
+            format = "$N.set$N(getInt(cursor,$S) == 1);\n";
         } else if (value.type == double.class) {
             format = "$N.set$N(getDouble(cursor,$S));\n";
         } else {

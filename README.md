@@ -14,7 +14,7 @@ YLiteDB封装了sqlite，利用注解实现表的创建、查询、插入等，�
  implementation 'com.jy.litedb:litedb-annotation:1.1.3'
 
  二、apt生成java代码:
- implementation 'com.jy.litedb:litedb-compiler:1.1.4'
+ implementation 'com.jy.litedb:litedb-compiler:1.1.5'
 
  三、api库：
  implementation 'com.jy.litedb:litedb-api:1.1.5'
